@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
+use App\Http\Controllers\PredictionController;
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\CoordinatorController;
@@ -42,11 +43,13 @@ use App\Models\User;
         Route::get('/clubs/add', function () {
             return view('clubs.add');
         })->name('clubs.add');
+        Route::post('/club/register', [ClubController::class, 'register'])->name('club.register');
         Route::post('/clubs/add', [ClubController::class, 'store'])->name('clubs.store');
         Route::get('/clubs/view/{id}', [ClubController::class, 'view'])->name('clubs.view');
         Route::get('/clubs/edit/{id}', [ClubController::class, 'edit'])->name('clubs.edit');
         Route::post('/clubs/update/{id}', [ClubController::class, 'update'])->name('clubs.update');
         Route::get('/clubs/delete/{id}', [ClubController::class, 'delete'])->name('clubs.delete');
+        Route::post('/club/approveReject', [ClubController::class, 'approveReject'])->name('clubs.approveReject');
     });
 
     Route::middleware(['auth', 'verified'])->group(function () {
@@ -65,6 +68,9 @@ use App\Models\User;
     Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/students', [StudentController::class, 'index'])->name('students.index');
         Route::get('/student/delete', [StudentController::class, 'delete'])->name('students.delete');
+        Route::get('/student/view/{id}', [StudentController::class, 'view'])->name('students.view');
+        Route::get('/student/edit/{id}', [StudentController::class, 'edit'])->name('students.edit');
+        Route::post('/student/update/{id}', [StudentController::class, 'update'])->name('student.update');
     });
 
     Route::middleware(['auth', 'verified'])->group(function () {
@@ -72,15 +78,23 @@ use App\Models\User;
     Route::get('/events', [EventController::class, 'show'])->name('events.index');
     Route::get('/events/list', [EventController::class, 'list'])->name('events.list');
     Route::get('/events/add', function () {
-        $clubs = Club::all(); // Retrieve all clubs
-        return view('events.add', compact('clubs'));
+        $clubs = Club::all();
+        $students = User::where('role', 'student')->get();
+
+        $coordinatorId = auth()->id();
+        $user = User::findOrFail($coordinatorId);
+        $specificClubIds = explode(',', $user->clubs);
+        $specificClubs = Club::whereIn('id', $specificClubIds)->get();
+    
+        return view('events.add', compact('clubs', 'students', 'specificClubs'));
     })->name('events.add');    
     
     Route::post('/events/add', [EventController::class, 'store'])->name('events.store');
     Route::get('/events/edit/{id}', function ($id) {
         $event = Event::findOrFail($id); // Retrieve the event by ID
         $clubs = Club::all(); // Retrieve all clubs
-        return view('events.edit', compact('event', 'clubs'));
+        $students = User::where('role', 'student')->get(); // Retrieve all user
+        return view('events.edit', compact('event', 'clubs', 'students'));
     })->name('events.edit');   
     
     Route::post('/events/approveReject', [EventController::class, 'approveReject'])->name('events.approveReject');
@@ -129,3 +143,5 @@ use App\Models\User;
     })->middleware(['auth', 'verified']);
 
     require __DIR__.'/auth.php';
+
+    Route::post('/predict-category', [PredictionController::class, 'predictCategory'])->name('predict.category');

@@ -64,7 +64,9 @@
                                                     <td>{{ $eventAttendeesCount[$student->id] }}</td>
                                                     <td><a href="student/delete/{{ $student->id }}" class="delete-student" data-id="{{ $student->id }}"
                                                         onclick="confirmDelete({{ $student->id }})">
-                                                        <button type="button" class="btn btn-danger btn-sm">Delete</button>
+                                                        <a href="student/view/{{ $student->id }}" type="button" class="btn btn-primary btn-sm">View</a>
+                                                        <a href="student/edit/{{ $student->id }}" type="button" class="btn btn-warning btn-sm">Edit</a>
+                                                        <a href="students/delete/{{ $student->id }}" type="button" class="btn btn-danger btn-sm">Delete</a>
                                                     </a>
                                                     <form id="approveRejectForm" action="" method="POST" style="margin:2px">
                                                         @csrf

@@ -31,7 +31,7 @@
                 </div>
                 <div class="content-header-right col-md-6 col-12">
                     <div class="btn-group float-md-right">
-                        <a href="create.php">
+                        <a href="{{ route('clubs.index') }}">
                         <button class="btn btn-info mb-1" type="button">Manage Clubs</button>
                         </a>
                     </div>
@@ -92,7 +92,7 @@
                                                 </div>
 
                                                 <div class="form-actions">
-                                                    <a href="index.php">
+                                                    <a href="{{ route('clubs.index') }}">
                                                         <button type="button" class="btn btn-warning mr-1">
                                                             <i class="ft-x"></i> Cancel
                                                         </button>

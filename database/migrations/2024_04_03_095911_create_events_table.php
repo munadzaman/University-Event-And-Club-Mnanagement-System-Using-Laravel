@@ -26,6 +26,7 @@ return new class extends Migration
             $table->string('image');
             $table->string('status');
             $table->text('coordinator_id')->nullable();
+            $table->text('visible_to')->nullable();
             $table->timestamps();
         });
     }

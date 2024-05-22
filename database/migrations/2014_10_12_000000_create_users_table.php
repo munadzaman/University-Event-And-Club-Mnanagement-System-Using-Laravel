@@ -21,7 +21,10 @@ return new class extends Migration
             $table->string('password');
             $table->string('role');
             $table->text('clubs')->nullable();
-            $table->text('coordinator_role')->nullable();
+            $table->text('pending_clubs')->nullable();
+            $table->text('rejected_clubs')->nullable();
+            $table->text('member_role')->nullable();
+            $table->text('course')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

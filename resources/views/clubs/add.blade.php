@@ -31,7 +31,7 @@
                 </div>
                 <div class="content-header-right col-md-6 col-12">
                     <div class="btn-group float-md-right">
-                        <a href="create.php">
+                        <a href="{{ route('clubs.index') }}">
                         <button class="btn btn-info mb-1" type="button">Manage Clubs</button>
                         </a>
                     </div>
@@ -71,7 +71,7 @@
                                                     <div class="col-md-6">
                                                         <div class="form-group">
                                                             <label for="projectinput1">Name <span class="text-danger">*</span></label>
-                                                            <input type="text" value="" name="name" id="projectinput1" class="form-control" required placeholder="Club Name">
+                                                            <input type="text" value="{{ old('name') }}" name="name" id="projectinput1" class="form-control" required placeholder="Club Name">
                                                         </div>
                                                     </div>
                                                     <div class="col-md-6">
@@ -86,13 +86,13 @@
                                                     <div class="col-md-12">
                                                         <div class="form-group">
                                                             <label for="projectinput4">Description</label>
-                                                            <textarea name="description" class="form-control" id="" cols="30" rows="10"></textarea>
+                                                            <textarea name="description" class="form-control" id="" cols="30" rows="10">{{ old('description') }}</textarea>
                                                         </div>
                                                     </div>
                                                 </div>
 
                                                 <div class="form-actions">
-                                                    <a href="index.php">
+                                                    <a href="{{ route('clubs.index') }}">
                                                         <button type="button" class="btn btn-warning mr-1">
                                                             <i class="ft-x"></i> Cancel
                                                         </button>

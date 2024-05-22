@@ -20,7 +20,7 @@ class CoordinatorController extends Controller
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', Rules\Password::defaults()],
             'clubs' => ['array', 'required'], 
-            'coordinator_role' => ['required', 'string', 'max:255'], 
+            'coordinator_id' => ['required', 'unique:users,student_id'],
         ]);
         $user = User::create([
             'name' => $request->name,
@@ -29,8 +29,7 @@ class CoordinatorController extends Controller
             'role' => 'coordinator',
             'student_id' => $request->coordinator_id,
             'phone' => $request->phone,
-            'clubs' => implode(',', $request->clubs), // Convert array to comma-separated string
-            'coordinator_role' => $request->coordinator_role,
+            'clubs' => implode(',', $request->clubs)
         ]);
 
         return redirect()->route('coordinators.add')->with('success', 'Coordinator Registration successful!');

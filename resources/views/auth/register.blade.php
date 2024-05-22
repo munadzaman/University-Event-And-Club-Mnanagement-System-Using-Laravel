@@ -92,6 +92,12 @@
                                                 </div>
                                             </fieldset>
                                             <fieldset class="form-group position-relative has-icon-left">
+                                                <input type="text" class="form-control" id="user-course" name="course" placeholder="Course *" required>
+                                                <div class="form-control-position">
+                                                    <i class="la la-newspaper-o"></i>
+                                                </div>
+                                            </fieldset>
+                                            <fieldset class="form-group position-relative has-icon-left">
                                                 <input type="password" class="form-control" id="user-password" name="password" placeholder="Enter Password *" required>
                                                 <div class="form-control-position">
                                                     <i class="la la-key"></i>

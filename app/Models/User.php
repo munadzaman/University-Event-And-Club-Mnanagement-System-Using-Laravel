@@ -30,7 +30,9 @@ class User extends Authenticatable
         'student_id',
         'phone',
         'clubs',
-        'coordinator_role'
+        'member_role',
+        'course',
+
     ];
 
     public function clubs(): BelongsToMany

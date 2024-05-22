@@ -33,7 +33,7 @@ class ClubController extends Controller
     }
 
     public function show()
-    {
+    {   
         $coordinatorId = auth()->id();
 
         // Retrieve all clubs
@@ -44,18 +44,122 @@ class ClubController extends Controller
         $specificClubIds = explode(',', $user->clubs);
         $specificClubs = Club::whereIn('id', $specificClubIds)->get();
 
-        return view('clubs.index', compact('clubs', 'specificClubs'));
+        // $membersRequests = User::all()->filter(function ($user) use ($id) {
+        //     $pendingClubs = explode(',', $user->pending_clubs);
+        //     return in_array($id, $pendingClubs);
+        // });
+
+        // $events = Event::where('club_id', $id)->get();
+        
+        $pendingClubs = [];
+        // Check if $user and $user->pending_clubs are not null before exploding
+        if ($user && $user->pending_clubs) {
+            $pendingClubs = explode(',', $user->pending_clubs);
+        }
+        
+        $rejectedClubs = [];
+        // Check if $user and $user->pending_clubs are not null before exploding
+        if ($user && $user->rejected_clubs) {
+            $rejectedClubs = explode(',', $user->rejected_clubs);
+        }
+        
+        $approvedClubs = [];
+        // Check if $user and $user->pending_clubs are not null before exploding
+        if ($user && $user->clubs) {
+            $approvedClubs = explode(',', $user->clubs);
+        }
+        
+        // Remove leading and trailing commas if $user->clubs is not null
+        $userClubs = $user ? trim($user->clubs, ',') : '';
+
+        return view('clubs.index', compact('clubs', 'specificClubs', 'pendingClubs', 'rejectedClubs', 'approvedClubs'));
     }
 
 
     public function view($id) {
+        $userId = auth()->id();
+
         $club = Club::find($id);
+
         $users = User::where('clubs', 'like', '%' . $id . '%')->get();
         
-        $events = Event::where('club_id', $id)->get();
+        $user = User::find($userId);
 
-        return view('clubs.view', compact('club', 'users', 'events'));
-    } 
+        $membersRequests = User::all()->filter(function ($user) use ($id) {
+            $pendingClubs = explode(',', $user->pending_clubs);
+            return in_array($id, $pendingClubs);
+        });
+
+        $events = Event::where('club_id', $id)->get();
+        
+        $pendingClubs = [];
+        // Check if $user and $user->pending_clubs are not null before exploding
+        if ($user && $user->pending_clubs) {
+            $pendingClubs = explode(',', $user->pending_clubs);
+        }
+        
+        $rejectedClubs = [];
+        // Check if $user and $user->pending_clubs are not null before exploding
+        if ($user && $user->rejected_clubs) {
+            $rejectedClubs = explode(',', $user->rejected_clubs);
+        }
+        
+        $clubs = [];
+        // Check if $user and $user->pending_clubs are not null before exploding
+        if ($user && $user->clubs) {
+            $clubs = explode(',', $user->clubs);
+        }
+        
+        // Remove leading and trailing commas if $user->clubs is not null
+        $userClubs = $user ? trim($user->clubs, ',') : '';
+        
+        return view('clubs.view', compact('club', 'users', 'events', 'user', 'pendingClubs', 'rejectedClubs', 'membersRequests', 'userClubs', 'clubs'));
+    }
+
+
+public function approveReject(Request $request) {
+    // Retrieve the approval status and data ID from the form
+    $approvalStatus = $request->input('approval_status');
+    $userId = $request->input('data_id');
+    $clubId = $request->input('clubId');
+    
+    // Find the user
+    $user = User::find($userId);
+
+    // Retrieve pending clubs and convert them to an array
+    $pendingClubs = explode(',', $user->pending_clubs);
+
+    // Remove $clubId from the pending clubs array
+    $pendingClubs = array_diff($pendingClubs, [$clubId]);
+
+    // Convert the pending clubs array back to a string
+    $user->pending_clubs = implode(',', $pendingClubs);
+
+    // Determine which column to use based on approval status
+    if ($approvalStatus == 1) {
+        // Add $clubId to clubs column
+        if ($user->clubs) {
+            $user->clubs .= ',' . $clubId;
+        } else {
+            $user->clubs = $clubId;
+        }
+    } elseif ($approvalStatus == 2) {
+        // Add $clubId to rejected_clubs column
+        if ($user->rejected_clubs) {
+            $user->rejected_clubs .= ',' . $clubId;
+        } else {
+            $user->rejected_clubs = $clubId;
+        }
+    }
+
+    // Save the user
+    $user->save();
+
+    // Redirect back with success message
+    return redirect()->back()->with('success', 'Status updated successfully!');
+}
+
+
     
     
 
@@ -109,5 +213,25 @@ class ClubController extends Controller
         $clubs = Club::find($request->id);
         $clubs->delete();
         return redirect()->back();
+    }
+
+    public function register(Request $request)
+    {
+        // Get the user ID
+        $userId = auth()->id();
+
+        $clubId = $request->input('clubId');
+
+        $user = User::find($userId);
+
+        if (!$user->pending_clubs) {
+            $user->pending_clubs = $clubId;
+        } else {
+            $user->pending_clubs .= ',' . $clubId;
+        }
+
+        $user->save();
+        
+        return response()->json(['success' => 'Registered Successfully!'], 201);
     }
 }

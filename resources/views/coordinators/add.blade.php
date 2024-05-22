@@ -83,7 +83,7 @@
                                                     <div class="col-md-4">
                                                         <div class="form-group">
                                                             <label for="projectinput3">Email<span class="text-danger"> *</span></label>
-                                                            <input type="email" id="projectinput3" value="{{ old('coordinator_id') }}" name="email" required class="form-control" placeholder="Email Address">
+                                                            <input type="email" id="projectinput3" value="{{ old('email') }}" name="email" required class="form-control" placeholder="Email Address">
                                                         </div>
                                                     </div>
                                                     <div class="col-md-4">
@@ -107,12 +107,6 @@
                                                         <div class="form-group">
                                                             <label for="projectinput4">Password <span class="text-danger"> *</span></label>
                                                             <input type="text" id="projectinput5" value="{{ old('password') }}" placeholder="*******"  name="password" class="form-control" >
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-4">
-                                                        <div class="form-group">
-                                                            <label for="projectinput4">Designation <span class="text-danger"> *</span></label>
-                                                            <input type="text" id="projectinput6" value="{{ old('coordinator_role') }}" placeholder="eg. President"  name="coordinator_role" class="form-control">
                                                         </div>
                                                     </div>
                                                 </div>

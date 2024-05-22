@@ -19,8 +19,10 @@ class EventController extends Controller
         $event = Event::findOrFail($eventId);
         
         $attendees = $event->attendees;
-        $totalEvents = Event::where('');
-        return view('events.view', compact('event', 'attendees'));
+        $student_id = auth()->id();
+        $eventAttendees = EventAttendee::where('student_id', $student_id)->where('event_id', $eventId)->exists();
+        
+        return view('events.view', compact('event', 'attendees', 'eventAttendees'));
     }
     
     
@@ -31,15 +33,16 @@ class EventController extends Controller
         $request->validate([
         'name' => ['required', 'string', 'max:255'],
         'start_date' => ['required', 'date', 'max:255'],
-        'end_date' => ['required', 'date', 'max:255'],
+        'end_date' => ['required', 'date', 'max:255', 'after_or_equal:start_date'],
         'start_time' => ['required', 'string', 'max:255'],
-        'end_time' => ['required', 'string', 'max:255'],
+        'end_time' => ['required', 'string', 'max:255', ],
         'venue' => ['required', 'string', 'max:255'],
         'club_id' => ['required', 'integer'], 
         'coordinator_id' => ['required', 'integer'], 
         'color' => ['required', 'string'], 
-        'description' => ['string', 'max:255'],
-        'image' => ['required', 'image', 'max:5048'], // Assuming image is an image file with a maximum size of 5MB
+        'description' => ['string', 'max:500'],
+        'image' => ['required', 'image', 'max:5048'], 
+        'selected_students' => ['required', 'string', 'max:255']
         ]);
 
         $newImageName = time() . '-' . $request->name . '.' . $request->image->extension();
@@ -59,8 +62,9 @@ class EventController extends Controller
         $club->image = $newImageName;
         $club->status = 0;
         $club->coordinator_id = $request->coordinator_id;
+        $club->visible_to = $request->selected_students;
         $club->save();
-
+        
         // Redirect back with a success message
         return redirect()->route('events.add')->with('success', 'Event registered successfully!');
     }
@@ -101,7 +105,10 @@ class EventController extends Controller
         $events = Event::with('club')->get();
         $specific_events = Event::where('coordinator_id', $userId)->with('club')->get();
         $coordinatorName = User::where('id', $userId)->value('name');
-        return view('events.index', compact('events', 'specific_events', 'coordinatorName'));
+        
+        $studentEvents = Event::whereRaw("FIND_IN_SET(?, visible_to)", [$userId])->where('status', 1)->whereDate('start_date', '>', now())->get();
+
+        return view('events.index', compact('events', 'specific_events', 'coordinatorName', 'studentEvents'));
     }
 
     public function list() {

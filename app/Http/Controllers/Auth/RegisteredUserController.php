@@ -33,7 +33,7 @@ class RegisteredUserController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'student_id' => ['required', 'unique:users,student_id']
+            'student_id' => ['required', 'unique:users,student_id'],
         ]);
 
         $user = User::create([
@@ -43,6 +43,8 @@ class RegisteredUserController extends Controller
             'role' => 'student',
             'student_id' => $request->student_id,
             'phone' => $request->phone,
+            'member_role' => 'Member',
+            'course' => $request->course
         ]);
 
         // event(new Registered($user));

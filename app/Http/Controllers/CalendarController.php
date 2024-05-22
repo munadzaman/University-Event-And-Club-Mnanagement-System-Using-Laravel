@@ -16,7 +16,7 @@ class CalendarController extends Controller
     
     public function getEvents()
     {
-        $events = Event::all(); // Fetch events from the database
+        $events = Event::where('status', 1)->get(); // Fetch events from the database
         return response()->json($events);
     }
 

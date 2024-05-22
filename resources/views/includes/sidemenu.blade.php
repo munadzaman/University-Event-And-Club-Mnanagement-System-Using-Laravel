@@ -47,15 +47,13 @@
                     </li>
                 @endif
 
-                @if(Auth::user()->role == 'admin')
                     <li class="nav-item">
                         <a href="{{ route('calendar.index') }}">
                             <i class="la la-calendar"></i>
                             <span class="menu-title" data-i18n="eCommerce">Calender</span>
                         </a>
                     </li>
-                @endif
-
+                
                 
 
                 @if(Auth::user()->role == 'student')

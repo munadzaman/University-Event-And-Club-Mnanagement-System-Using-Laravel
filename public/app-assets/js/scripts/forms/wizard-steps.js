@@ -17,11 +17,77 @@ $(".number-tab-steps").steps({
         finish: 'Submit'
     },
     onFinished: function (event, currentIndex) {
-        alert("Form submitted.");
+        // Serialize form data
+        var formData = new FormData($('#stepForm')[0]);
+
+        // Define checkedCheckboxes here
+        var checkedCheckboxes = $('tbody input[type="checkbox"]:checked');
+        var selectedStudentIds = [];
+
+        // Collect selected student IDs
+        checkedCheckboxes.each(function() {
+            selectedStudentIds.push($(this).data('id'));
+        });
+
+        var selectedStudentIdsString = selectedStudentIds.join(',');
+
+        formData.append('selected_students', selectedStudentIdsString);
+
+        // Remove this block, as selected students are already appended above
+        // Add checkbox data to formData
+        // checkedCheckboxes.each(function() {
+        //     formData.append('selected_students[]', $(this).data('id'));
+        // });
+
+        // Perform AJAX request
+        $.ajax({
+            url: $('#stepForm').attr('action'), // Form action URL
+            type: $('#stepForm').attr('method'), // Form method (POST in this case)
+            data: formData, // Form data
+            processData: false,
+            headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+            contentType: false,
+            success: function(response) {
+                // Handle success response
+                Swal.fire(
+                    'Success',
+                    'Event Created Successfully',
+                    'success'
+                ).then(function () {
+                    location.reload();
+                })
+                // Optionally, you can redirect to another page here
+            },
+            error: function(xhr, status, error) {
+                // Handle error response
+                if (xhr.responseJSON && xhr.responseJSON.errors) {
+                    var errorMessage = "";
+                    $.each(xhr.responseJSON.errors, function(key, value) {
+                        errorMessage += value + "\n";
+                    });
+                    Swal.fire(
+                        'Error',
+                        errorMessage,
+                        'error'
+                    );
+                } else {
+                    alert(error);
+                }
+            }
+        });
+        
     }
 });
 
+
+
+
+
+
+
 // Wizard tabs with icons setup
+
+
 $(".icons-tab-steps").steps({
     headerTag: "h6",
     bodyTag: "fieldset",
