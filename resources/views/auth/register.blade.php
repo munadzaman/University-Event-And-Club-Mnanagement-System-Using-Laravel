@@ -67,7 +67,7 @@
                                         <form class="form-horizontal" action="{{ route('register') }}" method="post" novalidate>
                                         @csrf
                                             <fieldset class="form-group position-relative has-icon-left">
-                                                <input type="text" class="form-control" id="full-name" name="name" placeholder="Full Name *" required>
+                                                <input type="text" value="{{ old('name') }}" class="form-control" id="full-name" name="name" placeholder="Full Name *" required>
                                                 <div class="form-control-position">
                                                     <i class="la la-user"></i>
                                                 </div>
@@ -86,13 +86,13 @@
                                                 </div>
                                             </fieldset>
                                             <fieldset class="form-group position-relative has-icon-left">
-                                                <input type="tel" class="form-control" id="user-email" name="phone" placeholder="Your Phone *" required>
+                                                <input type="tel" class="form-control" value="{{ old('phone') }}" id="user-email" name="phone" placeholder="Your Phone *" required>
                                                 <div class="form-control-position">
                                                     <i class="la la-phone"></i>
                                                 </div>
                                             </fieldset>
                                             <fieldset class="form-group position-relative has-icon-left">
-                                                <input type="text" class="form-control" id="user-course" name="course" placeholder="Course *" required>
+                                                <input type="text" class="form-control" id="user-course" value="{{ old('course') }}" name="course" placeholder="Course *" required>
                                                 <div class="form-control-position">
                                                     <i class="la la-newspaper-o"></i>
                                                 </div>

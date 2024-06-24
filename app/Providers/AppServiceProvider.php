@@ -2,6 +2,10 @@
 
 namespace App\Providers;
 
+use App\Http\ViewComposers\NotificationComposer;
+use Illuminate\Support\Facades\View;
+
+
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -17,8 +21,10 @@ class AppServiceProvider extends ServiceProvider
     /**
      * Bootstrap any application services.
      */
-    public function boot(): void
+    
+    public function boot()
     {
-        //
+        // Attach the NotificationComposer to the views that require notifications
+        View::composer('*', NotificationComposer::class);
     }
 }

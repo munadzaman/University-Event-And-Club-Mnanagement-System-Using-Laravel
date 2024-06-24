@@ -70,10 +70,15 @@
                                                 </div>
                                             </fieldset>
                                             @if ($errors->any())
-                                                    @foreach ($errors->all() as $error)
-                                                        <p class="text-danger">{{ $error }}</p>
-                                                    @endforeach
-                                        @endif
+                                                @foreach ($errors->all() as $error)
+                                                    <p class="text-danger">{{ $error }}</p>
+                                                @endforeach
+                                            @endif
+                                            @if (session()->has('success'))
+                                                <div class="alert alert-success">
+                                                    {{ session()->get('success') }}
+                                                </div>
+                                            @endif
                                             <button type="submit" class="btn btn-outline-info btn-lg btn-block"><i class="ft-unlock"></i> Recover
                                                 Password</button>
                                         </form>

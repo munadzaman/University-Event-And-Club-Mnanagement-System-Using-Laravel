@@ -3,7 +3,6 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
-use App\Http\Controllers\PredictionController;
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\CoordinatorController;
@@ -13,6 +12,9 @@ use App\Http\Controllers\CalendarController;
 use App\Http\Controllers\EventAttendeeController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\StudentController;
+use App\Http\Controllers\NewsController;
+use App\Http\Controllers\CarouselController;
+use App\Http\Controllers\NotificationController;
 
 use App\Models\Club;
 use App\Models\Event;
@@ -66,12 +68,42 @@ use App\Models\User;
     });
 
     Route::middleware(['auth', 'verified'])->group(function () {
+        Route::get('/news', [NewsController::class, 'index'])->name('news.index');
+        Route::get('/news/add', function () {
+            return view('news.add');
+        })->name('news.add');
+        Route::post('/news/add', [NewsController::class, 'store'])->name('news.store');
+        Route::get('/news/view/{id}', [NewsController::class, 'view'])->name('news.view');
+        Route::get('/news/delete/{id}', [NewsController::class, 'delete'])->name('news.delete');
+    });
+
+    Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/students', [StudentController::class, 'index'])->name('students.index');
+        Route::get('/students/add', [StudentController::class, 'add'])->name('students.add');
+        Route::post('/students/add', [StudentController::class, 'store'])->name('students.store');
         Route::get('/student/delete', [StudentController::class, 'delete'])->name('students.delete');
         Route::get('/student/view/{id}', [StudentController::class, 'view'])->name('students.view');
         Route::get('/student/edit/{id}', [StudentController::class, 'edit'])->name('students.edit');
         Route::post('/student/update/{id}', [StudentController::class, 'update'])->name('student.update');
+        Route::get('/student/profile/{id}', [StudentController::class, 'profile'])->name('student.profile');
+        Route::post('student/profile/update/{id}', [StudentController::class, 'update_profile'])->name('profile.update');
     });
+    
+    Route::middleware(['auth', 'verified'])->group(function () {
+        Route::get('/carousel', [CarouselController::class, 'index'])->name('carousel.index');
+        Route::get('/carousel/add', [CarouselController::class, 'add'])->name('carousel.add');
+        Route::get('/carousel/view/{id}', [CarouselController::class, 'view'])->name('carousel.view');
+        Route::get('/carousel/delete/{id}', [CarouselController::class, 'delete'])->name('carousel.delete');
+        Route::post('/carousel/add', [CarouselController::class, 'store'])->name('carousel.store');
+        Route::get('/carousel/edit/{id}', [CarouselController::class, 'edit'])->name('carousel.edit');
+        Route::post('/carousel/update/{id}', [CarouselController::class, 'update'])->name('carousel.update');
+    });
+    
+    Route::middleware(['auth', 'verified'])->group(function () {
+        Route::get('/home', [StudentController::class, 'home'])->name('students.home');
+    });
+    
+   
 
     Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/event/register', [EventController::class, 'register'])->name('event.register');
@@ -109,15 +141,22 @@ use App\Models\User;
         Route::post('/event_attendees/students_list', [EventAttendeeController::class, 'studentList'])->name('events.studentsList');
     });
 
-
     Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
     });
+    
+    Route::middleware(['auth', 'verified'])->group(function () {
+        Route::get('/notification', [NotificationController::class, 'index'])->name('notification.index');
+    });
 
+    Route::middleware(['auth', 'verified'])->group(function () {
+        Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
+        Route::post('/markAllAsRead', [DashboardController::class, 'markAllAsRead'])->name('notifications.markAllAsRead');
+    });
 
     Route::middleware('auth')->group(function () {
         Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-        Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+        // Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
         Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     });
 
@@ -143,5 +182,3 @@ use App\Models\User;
     })->middleware(['auth', 'verified']);
 
     require __DIR__.'/auth.php';
-
-    Route::post('/predict-category', [PredictionController::class, 'predictCategory'])->name('predict.category');

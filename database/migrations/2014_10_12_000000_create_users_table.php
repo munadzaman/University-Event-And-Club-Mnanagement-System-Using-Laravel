@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('phone');
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->boolean('is_admin')->default(false);
             $table->string('role');
             $table->text('clubs')->nullable();
             $table->text('pending_clubs')->nullable();

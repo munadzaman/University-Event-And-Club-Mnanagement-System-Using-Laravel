@@ -104,7 +104,6 @@
                                                             <a href="clubs/edit/{{ $specificClub->id }}">
                                                                 <button type="button" class="btn btn-warning btn-sm">Edit</button>
                                                             </a>
-                                                            
                                                         </td>
                                                     </tr>
                                                     @endforeach
@@ -154,12 +153,8 @@
     @include('includes.footer')
 
     <script>
-        function setModalImage(imageUrl, title) {
-            document.getElementById('modalImage').src = imageUrl;
-            document.getElementById('modalTitle').innerHTML = title;
-        }
-         // When the delete link is clicked
-         $('.delete-club').click(function(event) {
+
+        $('.delete-club').click(function(event) {
             event.preventDefault(); // Prevent the default action (i.e., following the link)
 
             var clubId = $(this).data('id'); // Get the coordinator ID from the data attribute
@@ -180,4 +175,11 @@
                 }
             });
         });
+        
+        function setModalImage(imageUrl, title) {
+            document.getElementById('modalImage').src = imageUrl;
+            document.getElementById('modalTitle').innerHTML = title;
+        }
+         // When the delete link is clicked
+        
     </script>

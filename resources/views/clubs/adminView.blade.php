@@ -91,6 +91,7 @@
                                             <div class="row mb-1 tabs">
                                                 <div class="col-md-8 mb-2 tab-buttons">
                                                     <button class="btn tab-btn btn-secondary active" width="200px" data-tab="#club_info">Club Info </button>
+                                                    <button class="btn tab-btn btn-outline-secondary custom-gap" width="200px" data-tab="#associated_members">Associated Members</button>
                                                     <button class="btn tab-btn btn-outline-secondary custom-gap" width="200px" data-tab="#associated_coordinators">Associated Coordinators</button>
                                                     <button class="btn tab-btn btn-outline-secondary custom-gap" width="200px" data-tab="#associated_events">Associated Events</button>
                                                     <button class="btn tab-btn btn-outline-secondary custom-gap" width="200px" data-tab="#members_requests">Members Request</button>
@@ -122,10 +123,37 @@
                                                             </tr>
                                                         </thead>
                                                         <tbody>
-                                                            @foreach($users as $user)
+                                                            @foreach($coordinators as $coordinator)
                                                             <tr>
                                                                 <td>{{ $loop->iteration }}</td>
-                                                                <td><a href="../../coordinators/view/{{ $user->id }}">{{ $user->name }}</td>
+                                                                <td><a href="../../coordinators/view/{{ $coordinator->id }}">{{ $coordinator->name }}</td>
+                                                            </tr>
+                                                            @endforeach
+                                                        </tbody>
+                                                        <tfoot>
+                                                            <tr>
+                                                                <th>S.No</th>
+                                                                <th>Name</th>
+                                                            </tr>
+                                                        </tfoot>
+                                                    </table>
+                                                </div>
+
+                                                <div class="tab" id="associated_members">
+                                                    <h3>Associated Members</h3>
+                                                    <hr>
+                                                    <table class="table table-striped table-bordered file-export" id="attendeeTable">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>S.No</th>
+                                                                <th>Name</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            @foreach($members as $user)
+                                                            <tr>
+                                                                <td>{{ $loop->iteration }}</td>
+                                                                <td><a href="../../students/view/{{ $user->id }}">{{ $user->name }}</td>
                                                             </tr>
                                                             @endforeach
                                                         </tbody>

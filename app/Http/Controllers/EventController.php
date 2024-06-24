@@ -9,6 +9,10 @@ use App\Models\Event;
 use App\Models\Club;
 use App\Models\User;
 use App\Models\EventAttendee;
+use Carbon\Carbon;
+
+use Illuminate\Support\Facades\Notification;
+use App\Notifications\EventApproval;
 
 class EventController extends Controller
 {
@@ -17,57 +21,92 @@ class EventController extends Controller
     {
         // Find the event by its ID
         $event = Event::findOrFail($eventId);
-        
+
+        // Get the attendees of the event
         $attendees = $event->attendees;
+
+        // Get the currently authenticated user's ID
         $student_id = auth()->id();
+
+        // Check if the authenticated user is an attendee of the event
         $eventAttendees = EventAttendee::where('student_id', $student_id)->where('event_id', $eventId)->exists();
-        
-        return view('events.view', compact('event', 'attendees', 'eventAttendees'));
+
+        // Count the total number of attendees for the event
+        $attendeeCount = EventAttendee::where('event_id', $eventId)->count();
+
+        // Determine if the event is live
+        $currentDateTime = Carbon::now();
+
+        $isLiveEvent = Event::where('id', $eventId)
+            ->where(function($query) use ($currentDateTime) {
+                $query->whereDate('start_date', '<=', $currentDateTime->toDateString())
+                      ->whereDate('end_date', '>=', $currentDateTime->toDateString());
+            })
+            ->where(function($query) use ($currentDateTime) {
+                $query->where(function($query) use ($currentDateTime) {
+                    $query->whereDate('start_date', '=', $currentDateTime->toDateString())
+                          ->whereTime('start_time', '<=', $currentDateTime->toTimeString())
+                          ->whereDate('end_date', '=', $currentDateTime->toDateString())
+                          ->whereTime('end_time', '>=', $currentDateTime->toTimeString());
+                })
+                ->orWhere(function($query) use ($currentDateTime) {
+                    $query->whereDate('start_date', '<=', $currentDateTime->toDateString())
+                          ->whereDate('end_date', '>=', $currentDateTime->toDateString());
+                });
+            })
+            ->exists();
+
+        // Additional check if the authenticated user is an attendee of the event
+        $isUserAttendee = EventAttendee::where('event_id', $eventId)
+                                       ->where('student_id', $student_id)
+                                       ->exists();
+
+
+        // Pass the data to the view
+        return view('events.view', compact('event', 'attendees', 'eventAttendees', 'attendeeCount', 'isLiveEvent', 'isUserAttendee'));
     }
     
     
 
     public function store(Request $request): RedirectResponse
     {
-    
         $request->validate([
-        'name' => ['required', 'string', 'max:255'],
-        'start_date' => ['required', 'date', 'max:255'],
-        'end_date' => ['required', 'date', 'max:255', 'after_or_equal:start_date'],
-        'start_time' => ['required', 'string', 'max:255'],
-        'end_time' => ['required', 'string', 'max:255', ],
-        'venue' => ['required', 'string', 'max:255'],
-        'club_id' => ['required', 'integer'], 
-        'coordinator_id' => ['required', 'integer'], 
-        'color' => ['required', 'string'], 
-        'description' => ['string', 'max:500'],
-        'image' => ['required', 'image', 'max:5048'], 
-        'selected_students' => ['required', 'string', 'max:255']
+            'name' => ['required', 'string', 'max:255'],
+            'start_date' => ['required', 'date', 'max:255'],
+            'end_date' => ['required', 'date', 'max:255', 'after_or_equal:start_date'],
+            'start_time' => ['required', 'string', 'max:255'],
+            'end_time' => ['required', 'string', 'max:255'],
+            'venue' => ['required', 'string', 'max:255'],
+            'club_id' => ['required', 'integer'], 
+            'coordinator_id' => ['required', 'integer'], 
+            'color' => ['required', 'string'], 
+            'description' => ['string', 'max:500'],
+            'image' => ['required', 'image', 'max:5048'], 
+            'selected_students' => ['required', 'string', 'max:255']
         ]);
 
         $newImageName = time() . '-' . $request->name . '.' . $request->image->extension();
         $request->image->move(public_path('images/event_images'), $newImageName);
 
-        // Create a new club instance
-        $club = new Event();
-        $club->name = $request->name;
-        $club->start_date = $request->start_date;
-        $club->end_date = $request->end_date;
-        $club->start_time = $request->start_time;
-        $club->end_time = $request->end_time;
-        $club->venue = $request->venue;
-        $club->club_id = $request->club_id;
-        $club->color = $request->color;
-        $club->description = $request->description;
-        $club->image = $newImageName;
-        $club->status = 0;
-        $club->coordinator_id = $request->coordinator_id;
-        $club->visible_to = $request->selected_students;
-        $club->save();
-        
-        // Redirect back with a success message
+        $event = new Event();
+        $event->name = $request->name;
+        $event->start_date = $request->start_date;
+        $event->end_date = $request->end_date;
+        $event->start_time = $request->start_time;
+        $event->end_time = $request->end_time;
+        $event->venue = $request->venue;
+        $event->club_id = $request->club_id;
+        $event->color = $request->color;
+        $event->description = $request->description;
+        $event->image = $newImageName;
+        $event->status = 0;
+        $event->coordinator_id = $request->coordinator_id;
+        $event->visible_to = $request->selected_students;
+        $event->save();
+
         return redirect()->route('events.add')->with('success', 'Event registered successfully!');
     }
+
 
     public function register(Request $request)
     {
@@ -91,6 +130,7 @@ class EventController extends Controller
         EventAttendee::create([
             'student_id' => $userId,
             'event_id' => $eventId,
+            'attended_status' => 0,
         ]);
 
         // Return a success response with a 201 Created status code
@@ -106,9 +146,29 @@ class EventController extends Controller
         $specific_events = Event::where('coordinator_id', $userId)->with('club')->get();
         $coordinatorName = User::where('id', $userId)->value('name');
         
-        $studentEvents = Event::whereRaw("FIND_IN_SET(?, visible_to)", [$userId])->where('status', 1)->whereDate('start_date', '>', now())->get();
+        $currentDateTime = Carbon::now();
 
-        return view('events.index', compact('events', 'specific_events', 'coordinatorName', 'studentEvents'));
+
+        $live_events = Event::whereRaw("FIND_IN_SET(?, visible_to)", [$userId])
+        ->where('status', 1)
+        ->whereDate('start_date', '>=', now()->toDateString()) // Starting date is today or later
+        ->where(function($query) use ($currentDateTime) {
+            $query->where('start_date', '>', now()->toDateString()) // Starting date is later than today
+                ->orWhere(function($query) use ($currentDateTime) {
+                    $query->whereDate('start_date', '=', now()->toDateString()) // Starting date is today
+                        ->whereTime('start_time', '>=', $currentDateTime->toTimeString()); // Start time is now or later
+                });
+        })
+        ->where(function($query) use ($currentDateTime) {
+            $query->where('end_date', '>', now()->toDateString()) // End date is later than today
+                ->orWhere(function($query) use ($currentDateTime) {
+                    $query->whereDate('end_date', '=', now()->toDateString()) // End date is today
+                        ->whereTime('end_time', '>', $currentDateTime->toTimeString()); // End time is later than now
+                });
+        })
+        ->get();
+        $studentEvents = Event::whereRaw("FIND_IN_SET(?, visible_to)", [$userId])->where('status', 1)->whereDate('start_date', '>', now())->get();
+        return view('events.index', compact('events', 'specific_events', 'coordinatorName', 'studentEvents', 'live_events'));
     }
 
     public function list() {
@@ -136,7 +196,6 @@ class EventController extends Controller
             'end_date' => ['required', 'string', 'max:255'],
             'start_time' => ['required', 'string', 'max:255'],
             'end_date' => ['required', 'string', 'max:255'],
-            'image' => 'nullable|mimes:jpg,jpeg,png,svg|max:5048',
             'color' => ['required', 'string', 'max:255'],
         ]);
 
@@ -178,17 +237,40 @@ class EventController extends Controller
         return redirect()->back()->with('success', 'Event updated successfully!');
     }
 
-    public function approveReject(Request $request) {
+    public function approveReject(Request $request)
+    {
         // Retrieve the approval status and data ID from the form
         $approvalStatus = $request->input('approval_status');
         $dataId = $request->input('data_id');
         
+        // Find the event by ID
         $event = Event::find($dataId);
+        // Check if event is found
+        if (!$event) {
+            return redirect()->back()->with('error', 'Event not found.');
+        }
+        
+        // Update the event status
         $event->status = $approvalStatus;
-
         $event->save();
+        
+        // Find the coordinator associated with the event
+        $coordinator = $event->coordinator;
+        
+        
+        // Check if coordinator is found
+        if (!$coordinator) {
+            return redirect()->back()->with('error', 'Coordinator not found.');
+        }
+
+        // Send notification to the coordinator
+        Notification::send($coordinator, new EventApproval($event, $approvalStatus));
+
         return redirect()->back()->with('success', 'Status updated successfully!');
     }
+
+
+
     
     public function delete(Request $request){
         $clubs = Event::find($request->id);

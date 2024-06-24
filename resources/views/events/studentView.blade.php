@@ -49,21 +49,56 @@
                                                         </tr>
                                                         <tr>
                                                             <th scope="row"><h4>No. of Attendees</h4></th>
-                                                            <td><h4></h4></td>
+                                                            <td><h4>{{ $attendeeCount }}</h4></td>
                                                         </tr>
+                                                        
                                                     </tbody>
                                                 </table>
-                                                @if($eventAttendees)
-                                                    <p class="text-warning">You are registered for this event</p>
-                                                @else
-                                                    <button class="btn btn-success" data-id="{{ $event->id }}" id="registerButton">Attend Event</button>
+
+
+                                                @if($isLiveEvent && $isUserAttendee)
+                                                    <button class="btn btn-info mb-1">Mark Attendance</button>
                                                 @endif
-                                                <h3>Description</h3>
-                                                <p>{{ $event->description }}</p>
+
+                                                @if($eventAttendees)
+                                                    <p class="text-success">You have Registered for this Event <i class="la la-check"></i></p>
+                                                @endif
+                                                @if(!$isLiveEvent)
+                                                    <button class="btn btn-secondary" data-id="{{ $event->id }}" id="registerButton">Mark as Interested</button>
+                                                @endif
+                                                @if($isLiveEvent && !$isUserAttendee)
+                                                    <span class="btn btn-danger" data-id="{{ $event->id }}" id="registerButton">You were not registserd for this event</span>
+                                                @endif
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <img src="{{ asset('images/event_images/' . $event->image) }}" class="img-responsive img-fluid rounded" alt="sd">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+            <div class="content-body">
+                <section id="tickets">
+                    <div class="row">
+                        <div class="col-lg-12 col-md-12">
+                            <div class="card">
+                                <!-- <div class="card-header"> -->
+                                    <!-- <h2 class="card-title">Explore the Event</h2> -->
+                                <!-- </div> -->
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="media-list media-bordered">
+                                                <div class="time mb-3">
+                                                    <h1>Description</h1>
+                                                </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            {{ $event->description }}
                                         </div>
                                     </div>
                                 </div>

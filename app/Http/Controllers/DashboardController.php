@@ -68,7 +68,8 @@ class DashboardController extends Controller
             // Count the number of elements in the array
             $approvedclubsCount = count($clubs);
         }
-
+        
+        $notifications = Auth::user()->notifications;
 
         
         
@@ -96,11 +97,18 @@ class DashboardController extends Controller
             'pendingClubsCount' => $pendingClubsCount,
             'rejectedClubsCount' => $rejectedClubsCount,
             'approvedclubsCount' => $approvedclubsCount,
-            'upcomingStudentEvents' => $upcomingStudentEvents
-
-
-
+            'upcomingStudentEvents' => $upcomingStudentEvents,
+            'notifications' => $notifications
             
         ]);
     }
+
+    public function markAllAsRead()
+    {
+        $user = Auth::user();
+        $user->unreadNotifications->markAsRead();
+        return response()->json(['success' => true]);
+    }
+    
+
 }

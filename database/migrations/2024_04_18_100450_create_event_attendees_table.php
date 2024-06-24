@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('event_id');
             $table->unsignedBigInteger('student_id');
+            $table->string('attended_status');
             $table->timestamps();
         });
     }

@@ -27,6 +27,13 @@
                         </div>
                     </div>
                 </div>
+                <div class="content-header-right col-md-6 col-12">
+                    <div class="btn-group float-md-right">
+                        <a href="{{ route('students.add') }}">
+                        <button class="btn btn-info mb-1" type="button">Create a New Student</button>
+                        </a>
+                    </div>
+                </div>
             </div>
             <div class="content-body">
                 <!-- File export table -->
@@ -68,13 +75,13 @@
                                                         <a href="student/edit/{{ $student->id }}" type="button" class="btn btn-warning btn-sm">Edit</a>
                                                         <a href="students/delete/{{ $student->id }}" type="button" class="btn btn-danger btn-sm">Delete</a>
                                                     </a>
-                                                    <form id="approveRejectForm" action="" method="POST" style="margin:2px">
+                                                    <!-- <form id="approveRejectForm" action="" method="POST" style="margin:2px">
                                                         @csrf
                                                         <button type="button" class="btn btn-success btn-sm approve-btn" data-id="">Approve</button>
                                                         <button type="button" class="btn btn-secondary btn-sm reject-btn" data-id="">Reject</button>
                                                         <input type="hidden" id="approvalStatus" name="approval_status">
                                                         <input type="hidden" id="dataId" name="data_id">
-                                                    </form>
+                                                    </form> -->
                                                 </td>
                                                 </tr>
                                                 @endforeach

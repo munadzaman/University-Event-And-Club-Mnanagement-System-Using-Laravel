@@ -65,9 +65,24 @@
                     </li>
                 @endif
 
-    
-
+                @if(Auth::user()->role == 'admin' || Auth::user()->role == 'coordinator')
+                    <li class="nav-item">
+                        <a href="{{ route('news.index') }}">
+                            <i class="la la-newspaper-o"></i>
+                            <span class="menu-title" data-i18n="eCommerce">News and Updates</span>
+                        </a>
+                    </li>
+                @endif
                 
+                @if(Auth::user()->role == 'admin' || Auth::user()->role == 'coordinator')
+                    <li class="nav-item">
+                        <a href="{{ route('carousel.index') }}">
+                            <i class="la la-image"></i>
+                            <span class="menu-title" data-i18n="eCommerce">Carousel Images</span>
+                        </a>
+                    </li>
+                @endif
+
             </ul>
         </div>
     </div>

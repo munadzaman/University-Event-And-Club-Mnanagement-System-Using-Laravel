@@ -45,129 +45,6 @@
                 </div>
             </div>
             <div class="content-body">
-                <!-- File export table -->
-                <!-- <section id="file-export">
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="card">
-                                <div class="card-header">
-                                    <h4 class="card-title">Add a New Event</h4>
-                                    <a class="heading-elements-toggle"><i class="la la-ellipsis-v font-medium-3"></i></a>
-                                </div>
-                                <div class="card-content collapse show">
-                                    <div class="card-body card-dashboard dataTables_wrapper dt-bootstrap">
-                                    <form class="form" action="{{ route('events.add') }}" method="post" enctype="multipart/form-data">
-                                            @csrf
-
-                                            @if ($errors->any())
-                                            <div class="alert alert-danger">
-                                                <ul>
-                                                    @foreach ($errors->all() as $error)
-                                                        <li>{{ $error }}</li>
-                                                    @endforeach
-                                                </ul>
-                                            </div>
-                                            @endif
-                                            @if (session()->has('success'))
-                                                <div class="alert alert-success">
-                                                    {{ session()->get('success') }}
-                                                </div>
-                                            @endif
-                                            <div class="form-body">
-                                                <div class="row">
-                                                    <div class="col-md-4">
-                                                        <div class="form-group">
-                                                            <label for="projectinput1">Name <span class="text-danger">*</span></label>
-                                                            <input type="text" name="name" value="{{ old('name') }}" id="projectinput1" class="form-control" placeholder="Full Name" required  >
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-4">
-                                                        <div class="form-group">
-                                                            <label for="projectinput2">Associated Club<span class="text-danger">*</span></label>
-                                                            <div class="form-group">
-                                                                <select class="select2 form-control" id="select2" name="club_id">
-                                                                    <optgroup label="Clubs">
-                                                                        @foreach($clubs as $club)
-                                                                            <option value="{{ $club->id }}">
-                                                                                <img src="{{ asset('images/club_logos/' . $club->logo) }}" alt="{{ $club->name }}" style="width: 30px; height: 30px; margin-right: 5px;">
-                                                                                {{ $club->name }}
-                                                                            </option>
-                                                                        @endforeach
-                                                                    </optgroup>
-                                                                </select>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <input type="text" value="{{ Auth::user()->id }}" hidden name="coordinator_id">
-                                                    <div class="col-md-4">
-                                                        <div class="form-group">
-                                                            <label for="projectinput3">Venue<span class="text-danger"> *</span></label>
-                                                            <input type="text" id="projectinput3" value="{{ old('venue') }}" name="venue" required class="form-control" placeholder="Event Venue">
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-4">
-                                                        <div class="form-group">
-                                                            <label for="projectinput4">Starting Date <span class="text-danger"> *</span></label>
-                                                            <input type="date" id="projectinput4" value="{{ old('start_date') }}" name="start_date" class="form-control" placeholder="Phone" >
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-4">
-                                                        <div class="form-group">
-                                                            <label for="projectinput4">End Date <span class="text-danger"> *</span></label>
-                                                            <input type="date" id="projectinput4" value="{{ old('end_date') }}" name="end_date" class="form-control" placeholder="Phone" >
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-4">
-                                                        <div class="form-group">
-                                                            <label for="projectinput4">Start Time <span class="text-danger"> *</span></label>
-                                                            <input type="time" id="projectinput4" value="{{ old('start_time') }}"  name="start_time" class="form-control" >
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-4">
-                                                        <div class="form-group">
-                                                            <label for="projectinput4">End Time <span class="text-danger"> *</span></label>
-                                                            <input type="time" id="projectinput4" value="{{ old('end_time') }}"  name="end_time" class="form-control" >
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-4">
-                                                        <div class="form-group">
-                                                            <label for="projectinput4">Image <span class="text-danger"> *</span></label>
-                                                            <input type="file" id="projectinput4" value=""  name="image" class="form-control" >
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-4">
-                                                        <div class="form-group">
-                                                            <label for="projectinput4">Color <span class="text-danger"> *</span></label>
-                                                            <input type="color" id="projectinput4" value="#5059e5"  name="color" class="form-control" >
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-12">
-                                                        <div class="form-group">
-                                                            <label for="projectinput4">Description</label>
-                                                            <textarea name="description" class="form-control" id="" cols="30" rows="10">{{ old('description') }}</textarea>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="form-actions">
-                                                    <a href="index.php">
-                                                        <button type="button" class="btn btn-warning mr-1">
-                                                            <i class="ft-x"></i> Cancel
-                                                        </button>
-                                                    </a>
-                                                    <button type="submit" class="btn btn-primary">
-                                                        <i class="la la-check-square-o"></i> Save
-                                                    </button>
-                                                </div>
-                                            </form>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </section> -->
-                <!-- File export table -->
-
-                <!-- Form wizard with number tabs section start -->
                 <section id="number-tabs">
                     <div class="row">
                         <div class="col-12">
@@ -189,11 +66,20 @@
                                                         <div class="form-group">
                                                             <label for="projectinput2">Associated Club<span class="text-danger">*</span></label>
                                                             <div class="form-group">
+                                                                @if(Auth::user()->role == 'coordinator')
                                                                 <select class="select2 form-control" id="select2" name="club_id">    
                                                                     @foreach($specificClubs as $club)
                                                                         <option value="{{ $club->id }}">{{ $club->name }}</option>
                                                                     @endforeach
                                                                 </select>
+                                                                @endif
+                                                                @if(Auth::user()->role == 'admin')
+                                                                    <select class="select2 form-control" id="select2" name="club_id">    
+                                                                        @foreach($clubs as $club)
+                                                                            <option value="{{ $club->id }}">{{ $club->name }}</option>
+                                                                        @endforeach
+                                                                    </select>
+                                                                @endif
                                                             </div>
                                                         </div>
                                                     </div>
@@ -266,7 +152,7 @@
                                                         @foreach($students as $student)
                                                         <tr>
                                                             <td>
-                                                                <input type="checkbox" checked data-id="{{ $student->id }}">
+                                                                <input type="checkbox" class="student-checkbox" data-id="{{ $student->id }}" name="students[]" value="{{ $student->id }}" {{ in_array($student->id, old('students', [])) ? 'checked' : '' }}>
                                                             </td>
                                                             <td>{{ $loop->iteration }}</td>
                                                             <td>{{ $student->name }}</td>
@@ -283,6 +169,7 @@
                                                         </tr>
                                                     </tfoot>
                                                 </table>
+                                                <input type="hidden" id="allSelectedStudents" name="selected_students" value="{{ old('selected_students') }}">
                                             </fieldset>
                                         </form>
                                     </div>
@@ -335,4 +222,44 @@
                 });
             });
         }); 
+
+        document.addEventListener("DOMContentLoaded", function() {
+            var selectAllCheckbox = document.getElementById("selectAllCheckbox");
+            var checkboxes = document.querySelectorAll(".student-checkbox");
+            var selectedStudentsInput = document.getElementById("allSelectedStudents");
+            var selectedStudents = new Set(selectedStudentsInput.value.split(',').filter(Boolean));
+
+            function updateSelectedStudentsInput() {
+                selectedStudentsInput.value = Array.from(selectedStudents).join(',');
+            }
+
+            selectAllCheckbox.addEventListener("click", function() {
+                checkboxes.forEach(function(checkbox) {
+                    checkbox.checked = selectAllCheckbox.checked;
+                    if (checkbox.checked) {
+                        selectedStudents.add(checkbox.value);
+                    } else {
+                        selectedStudents.delete(checkbox.value);
+                    }
+                });
+                updateSelectedStudentsInput();
+            });
+
+            checkboxes.forEach(function(checkbox) {
+                checkbox.addEventListener("click", function() {
+                    if (checkbox.checked) {
+                        selectedStudents.add(checkbox.value);
+                    } else {
+                        selectedStudents.delete(checkbox.value);
+                    }
+                    updateSelectedStudentsInput();
+                });
+
+                if (checkbox.checked) {
+                    selectedStudents.add(checkbox.value);
+                }
+            });
+
+            updateSelectedStudentsInput();
+        });
     </script>

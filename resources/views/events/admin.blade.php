@@ -99,10 +99,11 @@
                                                             <a href="events/edit/{{ $event->id }}" style="margin:1px">
                                                                 <button type="button" class="btn btn-warning btn-sm">Edit</button>
                                                             </a>
-                                                            <a href="events/delete/{{ $event->id }}" class="delete-club" style="margin:1px" data-id="{{ $event->id }}"
+                                                            <a href="events/delete/{{ $event->id }}" class="delete-events" data-id="{{ $event->id }}"
                                                                 onclick="confirmDelete({{ $event->id }})">
                                                                 <button type="button" class="btn btn-danger btn-sm">Delete</button>
                                                             </a>
+                                                            @if($event->status == 0)
                                                             <form id="approveRejectForm" action="{{ route('events.approveReject') }}" method="POST" style="margin:2px">
                                                                 @csrf
                                                                 <button type="button" class="btn btn-success btn-sm approve-btn" data-id="{{ $event->id }}">Approve</button>
@@ -110,6 +111,7 @@
                                                                 <input type="hidden" id="approvalStatus" name="approval_status">
                                                                 <input type="hidden" id="dataId" name="data_id">
                                                             </form>
+                                                            @endif
 
     
                                                         </td>
@@ -143,12 +145,10 @@
                                                             <a href="events/edit/{{ $specific_event->id }}" style="margin:1px">
                                                                 <button type="button" class="btn btn-warning btn-sm">Edit</button>
                                                             </a>
-                                                            <a href="events/delete/{{ $specific_event->id }}" class="delete-event" data-id="{{ $specific_event->id }}"
+                                                            <a href="events/delete/{{ $specific_event->id }}" class="delete-events" data-id="{{ $specific_event->id }}"
                                                                 onclick="confirmDelete({{ $specific_event->id }})">
                                                                 <button type="button" class="btn btn-danger btn-sm">Delete</button>
                                                             </a>
-                                                            
-    
                                                         </td>
                                                     </tr>
                                                     @endforeach
@@ -201,36 +201,32 @@
     </div>
     @include('includes.footer') 
     <script>
+        $('.delete-events').click(function(event) {
+            event.preventDefault(); // Prevent the default action (i.e., following the link)
+
+            var event = $(this).data('id'); // Get the coordinator ID from the data attribute
+
+            // Show SweetAlert confirmation dialog
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = '/events/delete/' + event;
+                }
+            });
+        });
+
         function setModalImage(imageUrl, title) {
             document.getElementById('modalImage').src = imageUrl;
             document.getElementById('modalTitle').innerHTML = title;
         }
         
-        $(document).ready(function(){
-            $('.delete-event').click(function(event) {
-                event.preventDefault(); // Prevent the default action (i.e., following the link)
-
-                var coordinatorId = $(this).data('id'); // Get the coordinator ID from the data attribute
-
-                // Show SweetAlert confirmation dialog
-                Swal.fire({
-                    title: 'Are you sure?',
-                    text: "You won't be able to revert this!",
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#d33',
-                    cancelButtonColor: '#3085d6',
-                    confirmButtonText: 'Yes, delete it!'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        // If confirmed, redirect to the delete route
-                        window.location.href = '/coordinators/delete/' + coordinatorId;
-                    }
-                });
-            });
-        });
-        
-
         $(document).ready(function() {
             $('.approve-btn').click(function() {
                 setApprovalStatus(this, 1);

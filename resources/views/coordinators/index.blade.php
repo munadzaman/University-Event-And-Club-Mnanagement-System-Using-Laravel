@@ -74,7 +74,7 @@
                                                                 <button type="button" class="btn btn-warning btn-sm">Edit</button>
                                                             </a>
                                                             <a href="coordinators/delete/{{ $coordinator->id }}" class="delete-coordinator" data-id="{{ $coordinator->id }}"
-                                                             onclick="confirmDelete({{ $coordinator->id }})">
+                                                                onclick="confirmDelete({{ $coordinator->id }})">
                                                                 <button type="button" class="btn btn-danger btn-sm">Delete</button>
                                                             </a>
                                                         </td>
@@ -129,4 +129,5 @@
                 }
             });
         });
+
     </script>

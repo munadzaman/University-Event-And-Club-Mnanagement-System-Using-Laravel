@@ -69,6 +69,7 @@ class ClubController extends Controller
             $approvedClubs = explode(',', $user->clubs);
         }
         
+
         // Remove leading and trailing commas if $user->clubs is not null
         $userClubs = $user ? trim($user->clubs, ',') : '';
 
@@ -77,11 +78,13 @@ class ClubController extends Controller
 
 
     public function view($id) {
+
         $userId = auth()->id();
 
         $club = Club::find($id);
 
-        $users = User::where('clubs', 'like', '%' . $id . '%')->get();
+        $coordinators = User::where('clubs', 'like', '%' . $id . '%')->where('role', 'coordinator')->get();
+        $members = User::where('clubs', 'like', '%' . $id . '%')->where('role', 'student')->get();
         
         $user = User::find($userId);
 
@@ -99,13 +102,13 @@ class ClubController extends Controller
         }
         
         $rejectedClubs = [];
-        // Check if $user and $user->pending_clubs are not null before exploding
+        // Check if $user and $user->rejected are not null before exploding
         if ($user && $user->rejected_clubs) {
             $rejectedClubs = explode(',', $user->rejected_clubs);
         }
         
         $clubs = [];
-        // Check if $user and $user->pending_clubs are not null before exploding
+        // Check if $user and $user->clubs are not null before exploding
         if ($user && $user->clubs) {
             $clubs = explode(',', $user->clubs);
         }
@@ -113,7 +116,7 @@ class ClubController extends Controller
         // Remove leading and trailing commas if $user->clubs is not null
         $userClubs = $user ? trim($user->clubs, ',') : '';
         
-        return view('clubs.view', compact('club', 'users', 'events', 'user', 'pendingClubs', 'rejectedClubs', 'membersRequests', 'userClubs', 'clubs'));
+        return view('clubs.view', compact('club', 'coordinators', 'events', 'user', 'pendingClubs', 'rejectedClubs', 'members', 'membersRequests', 'userClubs', 'clubs'));
     }
 
 
@@ -159,9 +162,6 @@ public function approveReject(Request $request) {
     return redirect()->back()->with('success', 'Status updated successfully!');
 }
 
-
-    
-    
 
     public function edit($id)
     {

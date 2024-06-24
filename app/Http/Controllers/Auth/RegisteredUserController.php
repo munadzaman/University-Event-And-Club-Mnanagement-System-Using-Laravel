@@ -13,6 +13,9 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Illuminate\View\View;
 
+use App\Notifications\NewUserRegistered;
+use Illuminate\Support\Facades\Notification;
+
 class RegisteredUserController extends Controller
 {
     /**
@@ -40,16 +43,22 @@ class RegisteredUserController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'role' => 'student',
+            'role' => 'admin',
             'student_id' => $request->student_id,
             'phone' => $request->phone,
             'member_role' => 'Member',
             'course' => $request->course
         ]);
 
-        // event(new Registered($user));
+
+        event(new Registered($user));
 
         // Auth::login($user);
+
+        $adminsAndCoordinators = User::where('role', 'admin')
+                                    ->orWhere('role', 'coordinator')
+                                    ->get();
+        Notification::send($adminsAndCoordinators, new NewUserRegistered($user));
 
         return redirect()->route('login')->with('success', 'Registration successful! You can now log in.');
     }
