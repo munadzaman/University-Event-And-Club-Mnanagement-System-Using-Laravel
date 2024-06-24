@@ -124,11 +124,13 @@ use App\Models\User;
     })->name('events.add');    
     
     Route::post('/events/add', [EventController::class, 'store'])->name('events.store');
+    
     Route::get('/events/edit/{id}', function ($id) {
         $event = Event::findOrFail($id); // Retrieve the event by ID
         $clubs = Club::all(); // Retrieve all clubs
         $students = User::where('role', 'student')->get(); // Retrieve all user
-        return view('events.edit', compact('event', 'clubs', 'students'));
+        $visibleTo = explode(',', $event->visible_to);
+        return view('events.edit', compact('event', 'clubs', 'students', 'visibleTo'));
     })->name('events.edit');   
     
     Route::post('/events/approveReject', [EventController::class, 'approveReject'])->name('events.approveReject');

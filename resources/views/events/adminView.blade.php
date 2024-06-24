@@ -78,10 +78,10 @@
                         <div class="card-body">
                             <div class="row mb-1 tabs">
                                 <div class="col-md-2 mb-1 tab-buttons">
-                                    <button class="btn tab-btn btn-secondary active" style="width: 150px;" data-tab="#event_info">Event Info </button>
+                                    <button class="btn tab-btn btn-secondary active" style="width: 200px;" data-tab="#event_info">Event Info </button>
                                 </div>
                                 <div class="col-md-2">
-                                    <button class="btn tab-btn btn-outline-secondary" style="width: 150px;" data-tab="#event_attendees">Event Attendees</button>
+                                    <button class="btn tab-btn btn-outline-secondary" style="width: 200px;" data-tab="#event_attendees">Regsitered Students</button>
                                 </div>
                             </div>
                             <div class="tab-content">
@@ -139,30 +139,61 @@
                                 </div>
                                 <div class="tab" id="event_attendees">
                                     <table class="table table-striped table-bordered file-export" id="attendeeTable">
+                                        <div class="d-flex justify-content-between align-items-center mb-3">
+                                            <h3 class="mb-0">Registered Students</h3>
+                                            <form action="{{ route('event.attendance') }}" method="POST">
+                                                @csrf
+                                                @if($isLiveEvent)
+                                                    <button class="btn btn-success mb-1" id="mark_attendance" data-id="{{ $event->id }}">Mark Attendance</button>
+                                                @endif
+                                            </div>
                                         <thead>
                                             <tr>
+                                                @if($isLiveEvent)
+                                                <th><input type="checkbox" checked id="selectAllCheckbox"></th>
+                                                @endif
                                                 <th>S.No</th>
                                                 <th>Username</th>
                                                 <th>Email</th>
+                                                <th>Status</th>
                                             </tr>
                                         </thead>
+                                        
                                         <tbody>
+                                            
                                             @foreach($attendees as $attendee)
                                                 <tr>
+                                                    @if($isLiveEvent)
+                                                        <td><input type="checkbox" checked class="student-checkbox" value="{{ $attendee->id }}" {{ in_array($attendee->id, old('selected_students', [])) ? 'checked' : '' }}></td>
+                                                    @endif
                                                     <td>{{ $loop->iteration }}</td>
                                                     <td>{{ $attendee->name }}</td>
                                                     <td>{{ $attendee->email }}</td>
+                                                    <td>
+                                                    @if($attendee->pivot->attended_status == 0)
+                                                        <span class="badge badge-danger">Absent</span>
+                                                    @elseif($attendee->pivot->attended_status == 1)
+                                                        <span class="badge badge-success">Present</span>
+                                                    @endif
+                                                    </td>
                                                 </tr>
                                             @endforeach
                                         </tbody>
                                         <tfoot>
                                             <tr>
+                                                @if($isLiveEvent)
+                                                <th>
+                                                    <input type="checkbox" checked id="selectAllCheckbox">
+                                                </th>
+                                                @endif
                                                 <th>S.No</th>
                                                 <th>Username</th>
                                                 <th>Email</th>
                                             </tr>
                                         </tfoot>
                                     </table>
+                                    <input type="hidden" id="allSelectedStudents" name="selected_students_1" value="{{ old('selected_students_1') }}">
+                                </form>
                                 </div>
                             </div>
                         </div>
@@ -227,4 +258,93 @@
             });
         });
         
+
+        document.addEventListener("DOMContentLoaded", function() {
+        var selectAllCheckbox = document.getElementById("selectAllCheckbox");
+        var checkboxes = document.querySelectorAll(".student-checkbox");
+        var selectedStudentsInput = document.getElementById("allSelectedStudents");
+
+        function updateSelectedStudentsInput() {
+            var selectedStudents = Array.from(checkboxes)
+                .filter(checkbox => checkbox.checked)
+                .map(checkbox => checkbox.value);
+            selectedStudentsInput.value = selectedStudents.join(',');
+        }
+
+        // Attach the update function to the select all checkbox
+        selectAllCheckbox.addEventListener("change", function() {
+            checkboxes.forEach(function(checkbox) {
+                checkbox.checked = selectAllCheckbox.checked;
+            });
+            updateSelectedStudentsInput();
+        });
+
+        // Attach the update function to each student checkbox
+        checkboxes.forEach(function(checkbox) {
+            checkbox.addEventListener("change", updateSelectedStudentsInput);
+        });
+
+        // Initial call to update the hidden input field on page load
+        updateSelectedStudentsInput();
+        });
+
+        $('#mark_attendance').click(function(e) {
+    e.preventDefault();
+    const eventId = $(this).data('id');
+    const selectedStudents = $('#allSelectedStudents').val();
+    
+    Swal.fire({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        type: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, Mark Attendance'
+    }).then((result) => {
+        if (result.value) {
+            $.ajax({
+                url: '/event/attendance/',
+                method: 'POST',
+                headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                data: {
+                    "eventId": eventId,
+                    "selected_students_1": selectedStudents
+                },
+                success: function(response) {
+                    // Check the response message and display appropriate Swal
+                    if (response.message === 'Attendance marked successfully') {
+                        Swal.fire(
+                            'Success',
+                            response.message,
+                            'success'
+                        ).then(function () {
+                            location.reload();
+                        });
+                    } else if (response.message === 'Attendance already marked for one or more students') {
+                        Swal.fire(
+                            'Info',
+                            response.message,
+                            'info'
+                        );
+                    } else {
+                        Swal.fire(
+                            'Error',
+                            'An unexpected error occurred',
+                            'error'
+                        );
+                    }
+                },
+                error: function() {
+                    Swal.fire(
+                        'Error',
+                        'An error occurred while processing your request',
+                        'error'
+                    );
+                }
+            });
+        }
+    });
+});
+
     </script>

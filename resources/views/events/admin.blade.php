@@ -156,12 +156,12 @@
                                             </tbody>
                                             <tfoot>
                                                 <tr>
-                                                    <th>S.No</th>
-                                                    <th>Name</th>
+                                                <th>S.No</th>
+                                                    <th>Title</th>
                                                     @if(Auth::user()->role == 'admin') 
-                                                    <th>Coordinator</th>
+                                                        <th>Coordinator</th>
                                                     @endif
-                                                    <th>Date & Time</th>
+                                                    <th>Start Date & Time</th>
                                                     <th>Venue</th>
                                                     <th>Club</th>
                                                     <th>Image</th>

@@ -22,15 +22,17 @@ class CoordinatorController extends Controller
             'clubs' => ['array', 'required'], 
             'coordinator_id' => ['required', 'unique:users,student_id'],
         ]);
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'role' => 'coordinator',
-            'student_id' => $request->coordinator_id,
-            'phone' => $request->phone,
-            'clubs' => implode(',', $request->clubs)
-        ]);
+        
+        $user = new User();
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->password = Hash::make($request->password);
+        $user->role = 'coordinator';
+        $user->student_id = $request->coordinator_id;
+        $user->phone = $request->phone;
+        $user->clubs = implode(',', $request->clubs);
+        $user->email_verified_at = now();
+        $user->save();
 
         return redirect()->route('coordinators.add')->with('success', 'Coordinator Registration successful!');
     }
