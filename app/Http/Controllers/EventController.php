@@ -13,6 +13,7 @@ use Carbon\Carbon;
 
 use Illuminate\Support\Facades\Notification;
 use App\Notifications\EventApproval;
+use App\Notifications\LiveEvents;
 
 class EventController extends Controller
 {
@@ -60,13 +61,38 @@ class EventController extends Controller
         $isUserAttendee = EventAttendee::where('event_id', $eventId)
                                        ->where('student_id', $student_id)
                                        ->exists();
+        
+        $isAttendee = EventAttendee::where('event_id', $eventId)
+                                       ->where('student_id', $student_id)
+                                       ->where('attended_status', 1)
+                                       ->exists();
 
 
         // Pass the data to the view
-        return view('events.view', compact('event', 'attendees', 'eventAttendees', 'attendeeCount', 'isLiveEvent', 'isUserAttendee'));
+        return view('events.view', compact('event', 'attendees', 'eventAttendees', 'attendeeCount', 'isLiveEvent', 'isUserAttendee', 'isAttendee'));
     }
     
-    
+    public function checkAndNotifyLiveEvents()
+    {
+        $currentDate = Carbon::now()->toDateString();
+        $currentTime = Carbon::now()->toTimeString();
+
+        // Get events that are going live
+        $liveEvents = Event::whereDate('start_date', $currentDate)
+            ->whereTime('start_time', '<=', $currentTime)
+            ->whereDate('end_date', '>=', $currentDate)
+            ->whereTime('end_time', '>=', $currentTime)
+            ->get();
+
+        foreach ($liveEvents as $event) {
+            // Get all users
+            $users = User::all();
+
+            // Send notification to all users
+            Notification::send($users, new LiveEvents($event));
+            Log::info('Notification sent for event ID: ' . $event->id);
+        }
+    }
 
     public function store(Request $request): RedirectResponse
     {
@@ -82,7 +108,7 @@ class EventController extends Controller
             'color' => ['required', 'string'], 
             'description' => ['string', 'max:500'],
             'image' => ['required', 'image', 'max:5048'], 
-            'selected_students' => ['required', 'string', 'max:255']
+            'selected_students_1' => ['required', 'string', 'max:255']
         ]);
 
         $newImageName = time() . '-' . $request->name . '.' . $request->image->extension();
@@ -95,13 +121,13 @@ class EventController extends Controller
         $event->start_time = $request->start_time;
         $event->end_time = $request->end_time;
         $event->venue = $request->venue;
-        $event->club_id = $request->club_id;
+        $event->club_id =   $request->club_id;
         $event->color = $request->color;
         $event->description = $request->description;
         $event->image = $newImageName;
         $event->status = 0;
         $event->coordinator_id = $request->coordinator_id;
-        $event->visible_to = $request->selected_students;
+        $event->visible_to = $request->selected_students_1;
         $event->save();
 
         return redirect()->route('events.add')->with('success', 'Event registered successfully!');
@@ -137,19 +163,53 @@ class EventController extends Controller
         return response()->json(['success' => 'Registered Successfully!'], 201);
     }
 
+    public function attendance(Request $request)
+    {
+        $userId = auth()->id();
+
+        // Get the event ID from the request data
+        $eventId = $request->input('eventId');
+
+        // Find the existing registration
+        $attendee = EventAttendee::where('event_id', $eventId)
+                                ->where('student_id', $userId)
+                                ->first();
+
+        if ($attendee) {
+            // Update the attended_status if the registration exists
+            $attendee->update(['attended_status' => 1]);
+
+            // Return a success response with a 200 OK status code
+            return response()->json(['success' => 'Updated Successfully!'], 200);
+        } else {
+            // Return an error response if no registration found
+            return response()->json(['error' => 'Registration not found.'], 404);
+        }
+    }
 
 
     public function show()
-    {
-        $userId = auth()->id();
-        $events = Event::with('club')->get();
-        $specific_events = Event::where('coordinator_id', $userId)->with('club')->get();
-        $coordinatorName = User::where('id', $userId)->value('name');
-        
-        $currentDateTime = Carbon::now();
-
-
-        $live_events = Event::whereRaw("FIND_IN_SET(?, visible_to)", [$userId])
+{
+    $userId = auth()->id();
+    
+    // Get all events with related club and coordinator information
+    $events = Event::with(['club', 'coordinator'])->get();
+    
+    // Get events specifically coordinated by the authenticated user
+    $specific_events = Event::where('coordinator_id', $userId)->with('club')->get();
+    
+    // Determine the coordinator name for the events coordinated by the authenticated user
+    $coordinatorName = null;
+    $specific_event = Event::with(['club', 'coordinator'])->where('coordinator_id', $userId)->first();
+    if ($specific_event) {
+        $coordinatorName = $specific_event->coordinator->name;
+    }
+    
+    // Current date and time
+    $currentDateTime = Carbon::now();
+    
+    // Get live events
+    $live_events = Event::whereRaw("FIND_IN_SET(?, visible_to)", [$userId])
         ->where('status', 1)
         ->whereDate('start_date', '>=', now()->toDateString()) // Starting date is today or later
         ->where(function($query) use ($currentDateTime) {
@@ -167,9 +227,16 @@ class EventController extends Controller
                 });
         })
         ->get();
-        $studentEvents = Event::whereRaw("FIND_IN_SET(?, visible_to)", [$userId])->where('status', 1)->whereDate('start_date', '>', now())->get();
-        return view('events.index', compact('events', 'specific_events', 'coordinatorName', 'studentEvents', 'live_events'));
-    }
+    
+    // Get student-specific events
+    $studentEvents = Event::whereRaw("FIND_IN_SET(?, visible_to)", [$userId])
+        ->where('status', 1)
+        ->whereDate('start_date', '>', now())
+        ->get();
+    
+    // Pass the data to the view
+    return view('events.index', compact('events', 'specific_events', 'coordinatorName', 'studentEvents', 'live_events'));
+}
 
     public function list() {
         $events = Event::with('club')->get();

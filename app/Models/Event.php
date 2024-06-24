@@ -24,5 +24,6 @@ class Event extends Model
     {
         return $this->belongsTo(User::class, 'coordinator_id');
     }
+
     
 }

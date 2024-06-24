@@ -18,6 +18,7 @@ class ClubController extends Controller
             'logo' => 'required|mimes:jpg,jpeg,png,svg|max:5048'
         ]);
 
+
         $newImageName = time() . '-' . $request->name . '.' . $request->logo->extension();
         $request->logo->move(public_path('images/club_logos'), $newImageName);
 

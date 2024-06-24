@@ -49,7 +49,7 @@
                                 </div>
                                 <div class="card-content collapse show">
                                     <div class="card-body card-dashboard dataTables_wrapper dt-bootstrap">
-                                    <form class="form" action="{{ route('news.add') }}" method="post" >
+                                    <form class="form" action="{{ route('news.add') }}" method="post" enctype="multipart/form-data">
                                         @csrf
                                         @if ($errors->any())
                                             <div class="alert alert-danger">
@@ -76,25 +76,31 @@
                                                     </div>
                                                     <div class="col-md-4">
                                                         <div class="form-group">
-                                                            <label for="projectinput2">Date </label>
+                                                            <label for="projectinput2">Date <span class="text-danger">*</span></label>
                                                             <input type="date" id="projectinput3" value="{{ old('date') }}" name="date"  class="form-control" required>
                                                         </div>
                                                     </div>
                                                     <div class="col-md-4">
                                                         <div class="form-group">
-                                                            <label for="projectinput2">Category </label>
+                                                            <label for="projectinput2">Category <span class="text-danger">*</span></label>
                                                             <input type="text" id="projectinput3" value="" placeholder="Enter Category" name="category"  class="form-control" required>
                                                         </div>
                                                     </div>
-                                                    
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-12">
+
+                                                    <div class="col-md-4">
+                                                        <div class="form-group">
+                                                            <label for="projectinput2">Image </label>
+                                                            <input type="file" id="projectinput3" value="" name="image"  class="form-control" required>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-md-8">
                                                         <div class="form-group">
                                                             <label for="projectinput4">Description</label>
                                                             <textarea name="description" placeholder="Enter description here...." class="form-control" id="" cols="30" rows="10" name="description">{{ old('description') }}</textarea>
                                                         </div>
                                                     </div>
+                                                    
                                                 </div>
 
                                                 <div class="form-actions">

@@ -44,11 +44,18 @@
                                         <div class="container">
                                             <div class="tab-content">
                                                 <div>
-                                                    <h3>{{ $news->title }}</h3>
-                                                    <p style="color:#ccc">{{ $news->category }}</p>
-                                                    <p>
-                                                    {{ $news->description }}
-                                                    </p>
+                                                    <div class="row">
+                                                        <div class="col-md-6">
+                                                            <h3>{{ $news->title }}</h3>
+                                                            <p style="color:#ccc">{{ $news->category }}</p>
+                                                            <p>
+                                                            {{ $news->description }}
+                                                            </p>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <img src="{{ asset('images/news_images/' . $news->image) }}" class="height-250 img-responsive" alt="Card image">
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>

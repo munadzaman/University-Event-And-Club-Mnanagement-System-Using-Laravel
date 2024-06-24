@@ -14,18 +14,23 @@ class NewsController extends Controller
     }
 
     public function store(Request $request): RedirectResponse {
+
         $request->validate([
             'title' => ['required', 'string', 'max:255'],
             'date' => ['required', 'date'],
             'description' => ['required', 'string', 'max:2000'],
             'category' => ['required', 'string', 'max:255']
         ]);
+
+        $newImageName = time() . '-' . $request->title . '.' . $request->image->extension();
+        $request->image->move(public_path('images/news_images'), $newImageName);
     
         $news = new News();
         $news->title = $request->title;
-        $news->date = $request->date; // Change 'start_date' to 'date'
+        $news->date = $request->date;
         $news->description = $request->description;
         $news->category = $request->category;
+        $news->image = $newImageName;
         $news->save();
     
         // Redirect to a route after successfully storing the news

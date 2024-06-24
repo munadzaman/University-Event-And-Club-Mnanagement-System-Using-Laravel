@@ -244,10 +244,4 @@
             $('#dataId').val(dataId);
             $('#approveRejectForm').submit();
         }
-
-
-
-
-
-
     </script>

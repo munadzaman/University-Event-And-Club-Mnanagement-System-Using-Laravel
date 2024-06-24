@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Auth;
 class StudentController extends Controller
 {
     public function index() {
+        
         // Retrieve students with the role 'student'
         $students = User::where('role', 'student')->get();
         
@@ -25,7 +26,8 @@ class StudentController extends Controller
         // Loop through each student
         foreach ($students as $student) {
             // Count the number of event attendees for the current student
-            $attendeeCount = EventAttendee::where('student_id', $student->id)->count();
+            $attendeeCount = EventAttendee::where('student_id', $student->id)->where('attended_status', 1)
+            ->count();
     
             // Store the count in the array with the student's ID as the key
             $eventAttendeesCount[$student->id] = $attendeeCount;
@@ -56,7 +58,7 @@ class StudentController extends Controller
         $user->password = bcrypt($request->password); // Ensure to hash the password before saving
         $user->role = 'student';
         $user->member_role = 'Member';
-
+        $user->email_verified_at = date('Y-m-d h:i:s');
         $user->save();
 
         // Redirect back with a success message
@@ -115,6 +117,7 @@ class StudentController extends Controller
         $clubIds = explode(',', $associatedClubs->clubs);
         $clubs = Club::whereIn('id', $clubIds)->get();
         
+        
         return view('students.view', compact('student', 'clubs'));
     }
 
@@ -156,7 +159,9 @@ class StudentController extends Controller
             $eventAttendeesCount[$event->id] = EventAttendee::where('event_id', $event->id)->count();
         }
 
-        return view('home', compact('events', 'specific_events', 'latestNews', 'coordinatorName', 'studentEvents', 'live_events', 'carousel', 'eventAttendeesCount'));
+
+        $eventScore = EventAttendee::where('student_id', $userId)->where('attended_status', 1)->count(); 
+        return view('home', compact('events', 'specific_events', 'latestNews', 'coordinatorName', 'studentEvents', 'live_events', 'carousel', 'eventAttendeesCount', 'eventScore'));
     }
 
     public function profile($id) {

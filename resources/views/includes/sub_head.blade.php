@@ -34,8 +34,8 @@
     <!-- BEGIN: Page CSS-->
     <link rel="stylesheet" type="text/css" href="../../../app-assets/css/core/menu/menu-types/horizontal-menu.css">
     <link rel="stylesheet" type="text/css" href="../../../app-assets/css/core/colors/palette-gradient.css">
-    <link rel="stylesheet" type="text/css" href="../../../app-assets/css/plugins/calendars/fullcalendar.css">
     <link rel="stylesheet" type="text/css" href="../../../app-assets/css/pages/dashboard-support.css">
+    <link rel="stylesheet" type="text/css" href="../../../app-assets/css/plugins/calendars/fullcalendar.css">
     <!-- END: Page CSS-->
 
     <!-- BEGIN: Custom CSS-->

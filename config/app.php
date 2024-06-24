@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Facade;
 
 return [
-
+    'scheduler_token' => env('SCHEDULER_TOKEN', 'default_token'),
     /*
     |--------------------------------------------------------------------------
     | Application Name
@@ -69,7 +69,7 @@ return [
     |
     */
 
-    'timezone' => 'UTC',
+    'timezone' => 'Asia/Kuala_Lumpur',
 
     /*
     |--------------------------------------------------------------------------
@@ -124,6 +124,8 @@ return [
     'key' => env('APP_KEY'),
 
     'cipher' => 'AES-256-CBC',
+
+    
 
     /*
     |--------------------------------------------------------------------------

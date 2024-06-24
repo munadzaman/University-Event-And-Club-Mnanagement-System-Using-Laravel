@@ -96,7 +96,7 @@
                                                             </div>
                                                             <div class="col border-right-blue-grey border-right-lighten-4">
                                                                 <div class="card-body text-center">
-                                                                    <h1 class="display-4">{{ $studentScore }}</h1>
+                                                                    <h1 class="display-4">{{ $eventScore }}</h1>
                                                                     <span>Total Score</span>
                                                                 </div>
                                                             </div>

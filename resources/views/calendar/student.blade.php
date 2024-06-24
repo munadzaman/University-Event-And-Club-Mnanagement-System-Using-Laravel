@@ -12,7 +12,7 @@
         <div class="content-wrapper">
         <div class="content-header row">
                 <div class="content-header-left col-md-6 col-12 mb-2 breadcrumb-new">
-                    <h3 class="content-header-title mb-0 d-inline-block">Calendar Events</h3>
+                    <h3 class="content-header-title mb-0 d-inline-block">Events Calendar</h3>
                 </div>
             </div>
             <div class="content-body">
@@ -40,41 +40,13 @@
     </div>
     <!-- END: Content-->
     
-@include('includes.sub_footer')
+@include('includes.footer')
 
-<script>
-    $(document).ready(function(){
-        $('.registerButton').click(function() {
-            const clubId = $(this).data('id');
-            Swal.fire({
-                title: 'Are you sure?',
-                text: "You won't be able to revert this!",
-                type: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes, Register Me'
-            }).then((result) => {
-            if (result.value) {
-                    $.ajax({
-                        url: '/club/register/',
-                        method: 'POST',
-                        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-                        data: {
-                            "clubId" : clubId,
-                        },
-                        success: function(response) {
-                                Swal.fire(
-                                    'Registered',
-                                    'Registered Successfully',
-                                    'success'
-                                ).then(function () {
-                                    location.reload();
-                                })
-                        },
-                    });
-                }
-            })
-        });
-    });
-</script>
+<!-- BEGIN: Footer-->
+<footer class="footer footer-static footer-light navbar-shadow">
+    <p class="clearfix blue-grey lighten-2 text-sm-center mb-0 px-2">
+        <span class="float-md-left d-block d-md-inline-block">Copyright &copy; 2019 <a class="text-bold-800 grey darken-2" href="https://1.envato.market/modern_admin" target="_blank">EventifyU</a>
+    </span>
+    <!-- <span class="float-md-right d-none d-lg-block">Hand-crafted & Made with<i class="ft-heart pink"></i><span id="scroll-top"></span></span></p> -->
+</footer>
+<!-- END: Footer-->

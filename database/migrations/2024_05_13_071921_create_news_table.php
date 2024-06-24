@@ -17,6 +17,7 @@ return new class extends Migration
         $table->text('description'); // Detailed description or content of the news
         $table->dateTime('date'); // Date when the news was posted or will be effective
         $table->string('category'); // Category or tag to categorize the news
+        $table->string('image');
         $table->timestamps();
     });
 }

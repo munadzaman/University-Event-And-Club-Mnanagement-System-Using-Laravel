@@ -140,9 +140,7 @@
                                                 <table class="table table-striped table-bordered file-export">
                                                     <thead>
                                                         <tr>
-                                                            <th>
-                                                                <input type="checkbox" checked id="selectAllCheckbox">
-                                                            </th>
+                                                            <th><input type="checkbox" id="selectAllCheckbox"></th>
                                                             <th>S.No</th>
                                                             <th>Name</th>
                                                             <th>Email</th>
@@ -152,7 +150,7 @@
                                                         @foreach($students as $student)
                                                         <tr>
                                                             <td>
-                                                                <input type="checkbox" class="student-checkbox" data-id="{{ $student->id }}" name="students[]" value="{{ $student->id }}" {{ in_array($student->id, old('students', [])) ? 'checked' : '' }}>
+                                                                <input type="checkbox" class="student-checkbox" value="{{ $student->id }}" {{ in_array($student->id, old('selected_students', [])) ? 'checked' : '' }}>
                                                             </td>
                                                             <td>{{ $loop->iteration }}</td>
                                                             <td>{{ $student->name }}</td>
@@ -169,7 +167,7 @@
                                                         </tr>
                                                     </tfoot>
                                                 </table>
-                                                <input type="hidden" id="allSelectedStudents" name="selected_students" value="{{ old('selected_students') }}">
+                                                <input type="hidden" id="allSelectedStudents" name="selected_students_1" value="{{ old('selected_students_1') }}">
                                             </fieldset>
                                         </form>
                                     </div>
@@ -207,59 +205,33 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            // Get the "Select All" checkbox
-            var selectAllCheckbox = document.getElementById("selectAllCheckbox");
+        var selectAllCheckbox = document.getElementById("selectAllCheckbox");
+        var checkboxes = document.querySelectorAll(".student-checkbox");
+        var selectedStudentsInput = document.getElementById("allSelectedStudents");
 
-            // Get all checkboxes in the table body
-            var checkboxes = document.querySelectorAll("tbody input[type='checkbox']");
+        function updateSelectedStudentsInput() {
+            var selectedStudents = Array.from(checkboxes)
+                .filter(checkbox => checkbox.checked)
+                .map(checkbox => checkbox.value);
+            selectedStudentsInput.value = selectedStudents.join(',');
+        }
 
-            // Add a click event listener to the "Select All" checkbox
-            selectAllCheckbox.addEventListener("click", function() {
-                // Loop through each checkbox in the table body
-                checkboxes.forEach(function(checkbox) {
-                    // Set the checked state of each checkbox to match the "Select All" checkbox
-                    checkbox.checked = selectAllCheckbox.checked;
-                });
-            });
-        }); 
-
-        document.addEventListener("DOMContentLoaded", function() {
-            var selectAllCheckbox = document.getElementById("selectAllCheckbox");
-            var checkboxes = document.querySelectorAll(".student-checkbox");
-            var selectedStudentsInput = document.getElementById("allSelectedStudents");
-            var selectedStudents = new Set(selectedStudentsInput.value.split(',').filter(Boolean));
-
-            function updateSelectedStudentsInput() {
-                selectedStudentsInput.value = Array.from(selectedStudents).join(',');
-            }
-
-            selectAllCheckbox.addEventListener("click", function() {
-                checkboxes.forEach(function(checkbox) {
-                    checkbox.checked = selectAllCheckbox.checked;
-                    if (checkbox.checked) {
-                        selectedStudents.add(checkbox.value);
-                    } else {
-                        selectedStudents.delete(checkbox.value);
-                    }
-                });
-                updateSelectedStudentsInput();
-            });
-
+        // Attach the update function to the select all checkbox
+        selectAllCheckbox.addEventListener("change", function() {
             checkboxes.forEach(function(checkbox) {
-                checkbox.addEventListener("click", function() {
-                    if (checkbox.checked) {
-                        selectedStudents.add(checkbox.value);
-                    } else {
-                        selectedStudents.delete(checkbox.value);
-                    }
-                    updateSelectedStudentsInput();
-                });
-
-                if (checkbox.checked) {
-                    selectedStudents.add(checkbox.value);
-                }
+                checkbox.checked = selectAllCheckbox.checked;
             });
-
             updateSelectedStudentsInput();
         });
+
+        // Attach the update function to each student checkbox
+        checkboxes.forEach(function(checkbox) {
+            checkbox.addEventListener("change", updateSelectedStudentsInput);
+        });
+
+        // Initial call to update the hidden input field on page load
+        updateSelectedStudentsInput();
+        });
+
+
     </script>

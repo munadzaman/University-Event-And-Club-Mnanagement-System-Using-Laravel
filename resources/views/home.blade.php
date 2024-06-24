@@ -50,41 +50,43 @@
                                                     <div class="card">
                                                         <div class="card-body">
                                                             <div class="media-list media-bordered">
-                                                                @foreach($studentEvents as $event)
-                                                                    @if(!$studentEvents->isEmpty())
-                                                                        <div class="media">
-                                                                            <div class="media-left">
-                                                                                <img src="images/event_images/{{ $event->image }}" height="100" width="100" alt="" class="mr-3 profile-img rounded-circle">
-                                                                            </div>
-                                                                            <div class="media-body">
-                                                                                <h5><a href="events/view/{{ $event->id }}" class="text-info ticket-heading">
-                                                                                        {{ $event->name }}
-                                                                                    </a></h5>
-                                                                                <p class="text-muted">
-                                                                                        {{ str_word_count($event->description) > 150 ? '....' : $event->description }}
-                                                                                </p>
-                                                                                <ul class="list-unstyled list-inline">
-                                                                                    <li class="support-ticket-item  text-light">
-                                                                                        <i class="font-small-3 la la-club"></i>
-                                                                                    </li>
-                                                                                    <li class="support-ticket-item  text-light">
-                                                                                        <i class="font-small-3 la la-calendar"></i>
-                                                                                        {{ \Carbon\Carbon::parse($event->start_date)->format('F d, Y') }}
-                                                                                    </li>
-                                                                                    <li class="support-ticket-item  text-light">
-                                                                                        <i class="font-small-3 ft-user"></i>
-                                                                                        {{ $eventAttendeesCount[$event->id] ?? 0 }}
-                                                                                    </li>
-                                                                                </ul>
-                                                                            </div>
+                                                            @foreach($studentEvents as $event)
+                                                                @if(!$studentEvents->isEmpty())
+                                                                    <div class="media">
+                                                                        <div class="media-left">
+                                                                            <img src="images/event_images/{{ $event->image }}" height="100" width="100" alt="" class="mr-3 profile-img rounded-circle">
                                                                         </div>
-                                                                    @endif
-                                                                @endforeach
-                                                            </div>
+                                                                        <div class="media-body">
+                                                                            
+
+                                                                            <h5><a href="events/view/{{ $event->id }}" class="text-info ticket-heading">
+                                                                                    {{ $event->name }}
+                                                                                </a></h5>
+                                                                            <p class="text-muted">
+                                                                                {{ $event->description }}
+                                                                            </p>
+                                                                            <ul class="list-unstyled list-inline">
+                                                                                <li class="support-ticket-item  text-light">
+                                                                                    <i class="font-small-3 la la-club"></i>
+                                                                                    
+                                                                                </li>
+                                                                                <li class="support-ticket-item  text-light">
+                                                                                    <i class="font-small-3 la la-calendar"></i>
+                                                                                    {{ \Carbon\Carbon::parse($event->start_date)->format('F d, Y') }}
+                                                                                </li>
+                                                                                <li class="support-ticket-item  text-light">
+                                                                                    <i class="font-small-3 ft-user"></i>
+                                                                                    13
+                                                                                </li>
+                                                                            </ul>
+                                                                        </div>
+                                                                    </div>
+                                                                @endif
+                                                            @endforeach
                                                             @if($studentEvents->isEmpty())
-                                                            <div class="text-center" style="color:#C0C0C0">
-                                                                <h2 style="color:#C0C0C0;font-size:20px">No upcoming events available at a moment</h2>
-                                                            </div>
+                                                                <div class="text-center" style="color:#C0C0C0">
+                                                                    <h2 style="color:#C0C0C0;font-size:20px">No upcoming events available at a moment</h2>
+                                                                </div>
                                                             @endif
                                                         </div>
                                                     </div>  
@@ -107,43 +109,44 @@
                                         <div class="row">
                                                 <div class="col-lg-12 col-md-12">
                                                     <div class="card">
+                                                        
                                                         <div class="card-body">
                                                             <div class="media-list media-bordered">
-                                                                @foreach($live_events as $event)
-                                                                    @if(!$live_events->isEmpty())
-                                                                        <div class="media">
-                                                                            <div class="media-left">
-                                                                                <img src="images/event_images/{{ $event->image }}" height="100" width="100" alt="" class="mr-3 profile-img rounded-circle">
-                                                                            </div>
-                                                                            <div class="media-body">
-                                                                                <h5><a href="events/view/{{ $event->id }}" class="text-info ticket-heading">
-                                                                                        {{ $event->name }}
-                                                                                    </a></h5>
-                                                                                <p class="text-muted">
-                                                                                    {{ str_word_count($event->description) > 150 ? '....' : $event->description }}
-                                                                                </p>
-                                                                                <ul class="list-unstyled list-inline">
-                                                                                    <li class="support-ticket-item  text-light">
-                                                                                        <i class="font-small-3 la la-club"></i>
-                                                                                    </li>
-                                                                                    <li class="support-ticket-item  text-light">
-                                                                                        <i class="font-small-3 la la-calendar"></i>
-                                                                                        {{ \Carbon\Carbon::parse($event->start_date)->format('F d, Y') }}
-                                                                                    </li>
-                                                                                    <li class="support-ticket-item  text-light">
-                                                                                        <i class="font-small-3 ft-user"></i>
-                                                                                        {{ $eventAttendeesCount[$event->id] ?? 0 }}
-                                                                                    </li>
-                                                                                </ul>
-                                                                            </div>
+                                                            @foreach($live_events as $event)
+                                                                @if(!$live_events->isEmpty())
+                                                                    <div class="media">
+                                                                        <div class="media-left">
+                                                                            <img src="images/event_images/{{ $event->image }}" height="100" width="100" alt="" class="mr-3 profile-img rounded-circle">
                                                                         </div>
-                                                                    @endif
-                                                                @endforeach
-                                                            </div>
+                                                                        <div class="media-body">
+                                                                            <h5><a href="events/view/{{ $event->id }}" class="text-info ticket-heading">
+                                                                                    {{ $event->name }}
+                                                                                </a></h5>
+                                                                            <p class="text-muted">
+                                                                                {{ $event->description }}
+                                                                            </p>
+                                                                            <ul class="list-unstyled list-inline">
+                                                                                <li class="support-ticket-item  text-light">
+                                                                                    <i class="font-small-3 la la-club"></i>
+                                                                                    
+                                                                                </li>
+                                                                                <li class="support-ticket-item  text-light">
+                                                                                    <i class="font-small-3 la la-calendar"></i>
+                                                                                    {{ \Carbon\Carbon::parse($event->start_date)->format('F d, Y') }}
+                                                                                </li>
+                                                                                <li class="support-ticket-item  text-light">
+                                                                                    <i class="font-small-3 ft-user"></i>
+                                                                                    13
+                                                                                </li>
+                                                                            </ul>
+                                                                        </div>
+                                                                    </div>
+                                                                @endif
+                                                            @endforeach
                                                             @if($live_events->isEmpty())
-                                                            <div class="text-center" style="color:#C0C0C0">
-                                                                <h2 style="color:#C0C0C0;font-size:20px">No live events are available at a moment</h2>
-                                                            </div>
+                                                                <div class="text-center" style="color:#C0C0C0">
+                                                                    <h2 style="color:#C0C0C0;font-size:20px">No live events available at a moment</h2>
+                                                                </div>
                                                             @endif
                                                         </div>
                                                     </div>  

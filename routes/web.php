@@ -15,6 +15,7 @@ use App\Http\Controllers\StudentController;
 use App\Http\Controllers\NewsController;
 use App\Http\Controllers\CarouselController;
 use App\Http\Controllers\NotificationController;
+use Illuminate\Support\Facades\Artisan;
 
 use App\Models\Club;
 use App\Models\Event;
@@ -107,6 +108,7 @@ use App\Models\User;
 
     Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/event/register', [EventController::class, 'register'])->name('event.register');
+    Route::post('/event/attendance', [EventController::class, 'attendance'])->name('event.attendance');
     Route::get('/events', [EventController::class, 'show'])->name('events.index');
     Route::get('/events/list', [EventController::class, 'list'])->name('events.list');
     Route::get('/events/add', function () {
@@ -180,5 +182,14 @@ use App\Models\User;
     Route::get('/profile', function () {
         // Only verified users may access this route...
     })->middleware(['auth', 'verified']);
+
+    Route::get('/run-scheduler', function (Request $request) {
+        $token = $request->query('token');
+        if ($token !== config('app.scheduler_token')) {
+            abort(403, 'Unauthorized action.');
+        }
+        Artisan::call('run:scheduler');
+        return 'Scheduler run successfully';
+    });
 
     require __DIR__.'/auth.php';

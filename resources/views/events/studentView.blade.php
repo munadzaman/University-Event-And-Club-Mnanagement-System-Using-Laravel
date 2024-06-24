@@ -54,18 +54,23 @@
                                                         
                                                     </tbody>
                                                 </table>
-
-
-                                                @if($isLiveEvent && $isUserAttendee)
-                                                    <button class="btn btn-info mb-1">Mark Attendance</button>
+                                                @if($isAttendee)
+                                                <p class="badge badge-success" style="font-size:15px">Attended Successfully!</p>
                                                 @endif
 
-                                                @if($eventAttendees)
-                                                    <p class="text-success">You have Registered for this Event <i class="la la-check"></i></p>
+                                                @if($isLiveEvent && $isUserAttendee && !$isAttendee)
+                                                    <button class="btn btn-info mb-1" id="mark_attendance" data-id="{{ $event->id }}">Mark your Attendance</button>
                                                 @endif
-                                                @if(!$isLiveEvent)
+
+                                                @if($eventAttendees && !$isLiveEvent)
+                                                    <span class="text-success text-dark badge badge-success" style="font-size: 15px">You have Registered for this Event 
+                                                    <i class="la la-check"></i> </span>
+                                                @endif
+
+                                                @if(!$isLiveEvent && !$isUserAttendee)
                                                     <button class="btn btn-secondary" data-id="{{ $event->id }}" id="registerButton">Mark as Interested</button>
                                                 @endif
+
                                                 @if($isLiveEvent && !$isUserAttendee)
                                                     <span class="btn btn-danger" data-id="{{ $event->id }}" id="registerButton">You were not registserd for this event</span>
                                                 @endif
@@ -127,6 +132,39 @@
             if (result.value) {
                     $.ajax({
                         url: '/event/register/',
+                        method: 'POST',
+                        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                        data: {
+                            "eventId" : eventId,
+                        },
+                        success: function(response) {
+                                Swal.fire(
+                                    'Registered',
+                                    'Registered Successfully',
+                                    'success'
+                                ).then(function () {
+                                    location.reload();
+                                })
+                        },
+                    });
+                }
+            })
+        });
+        
+        $('#mark_attendance').click(function() {
+            const eventId = $(this).data('id');
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, Mark My Attendance'
+            }).then((result) => {
+            if (result.value) {
+                    $.ajax({
+                        url: '/event/attendance/',
                         method: 'POST',
                         headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
                         data: {
