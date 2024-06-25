@@ -8,6 +8,11 @@ use App\Models\User;
 use App\Models\Event;
 use Illuminate\Support\Facades\Hash;
 
+use App\Notifications\approveClubRequest;
+use App\Notifications\ClubRequestNotification;
+use Illuminate\Support\Facades\Notification;
+
+
 class ClubController extends Controller
 {
     public function store(Request $request): RedirectResponse
@@ -121,47 +126,56 @@ class ClubController extends Controller
     }
 
 
-public function approveReject(Request $request) {
-    // Retrieve the approval status and data ID from the form
-    $approvalStatus = $request->input('approval_status');
-    $userId = $request->input('data_id');
-    $clubId = $request->input('clubId');
-    
-    // Find the user
-    $user = User::find($userId);
+    public function approveReject(Request $request)
+    {
+        // Retrieve the approval status and data ID from the form
+        $approvalStatus = $request->input('approval_status');
+        $userId = $request->input('data_id');
+        $clubId = $request->input('clubId');
 
-    // Retrieve pending clubs and convert them to an array
-    $pendingClubs = explode(',', $user->pending_clubs);
+        // Find the user and the club
+        $user = User::find($userId);
+        $club = Club::find($clubId);
 
-    // Remove $clubId from the pending clubs array
-    $pendingClubs = array_diff($pendingClubs, [$clubId]);
-
-    // Convert the pending clubs array back to a string
-    $user->pending_clubs = implode(',', $pendingClubs);
-
-    // Determine which column to use based on approval status
-    if ($approvalStatus == 1) {
-        // Add $clubId to clubs column
-        if ($user->clubs) {
-            $user->clubs .= ',' . $clubId;
-        } else {
-            $user->clubs = $clubId;
+        if (!$user || !$club) {
+            return redirect()->back()->with('error', 'Invalid user or club.');
         }
-    } elseif ($approvalStatus == 2) {
-        // Add $clubId to rejected_clubs column
-        if ($user->rejected_clubs) {
-            $user->rejected_clubs .= ',' . $clubId;
-        } else {
-            $user->rejected_clubs = $clubId;
+
+        // Retrieve pending clubs and convert them to an array
+        $pendingClubs = explode(',', $user->pending_clubs);
+
+        // Remove $clubId from the pending clubs array
+        $pendingClubs = array_diff($pendingClubs, [$clubId]);
+
+        // Convert the pending clubs array back to a string
+        $user->pending_clubs = implode(',', $pendingClubs);
+
+        // Determine which column to use based on approval status
+        if ($approvalStatus == 1) {
+            // Add $clubId to clubs column
+            if ($user->clubs) {
+                $user->clubs .= ',' . $clubId;
+            } else {
+                $user->clubs = $clubId;
+            }
+        } elseif ($approvalStatus == 2) {
+            // Add $clubId to rejected_clubs column
+            if ($user->rejected_clubs) {
+                $user->rejected_clubs .= ',' . $clubId;
+            } else {
+                $user->rejected_clubs = $clubId;
+            }
         }
+
+        // Save the user
+        $user->save();
+
+        // Send the notification to the user
+        Notification::send($user, new approveClubRequest($club, $user, $approvalStatus));
+
+        // Redirect back with success message
+        return redirect()->back()->with('success', 'Status updated successfully!');
     }
-
-    // Save the user
-    $user->save();
-
-    // Redirect back with success message
-    return redirect()->back()->with('success', 'Status updated successfully!');
-}
 
 
     public function edit($id)
@@ -220,19 +234,36 @@ public function approveReject(Request $request) {
     {
         // Get the user ID
         $userId = auth()->id();
-
         $clubId = $request->input('clubId');
 
+        // Find the user and the club
         $user = User::find($userId);
+        $club = Club::find($clubId);
 
+        if (!$user || !$club) {
+            return response()->json(['error' => 'Invalid user or club'], 400);
+        }
+
+
+        // Update the pending clubs for the user
         if (!$user->pending_clubs) {
             $user->pending_clubs = $clubId;
         } else {
             $user->pending_clubs .= ',' . $clubId;
         }
 
+        // Save the user
         $user->save();
-        
+
+        // Find admins and coordinators
+        $adminAndCoordinator = User::where('role', 'admin')
+                                    ->orWhere('role', 'coordinator')
+                                    ->get();
+
+        // Send the notification
+        Notification::send($adminAndCoordinator, new ClubRequestNotification($club, $user));
+
         return response()->json(['success' => 'Registered Successfully!'], 201);
     }
+
 }

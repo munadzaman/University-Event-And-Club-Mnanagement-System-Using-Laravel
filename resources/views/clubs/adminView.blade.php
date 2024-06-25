@@ -90,11 +90,11 @@
                                         <div class="container">
                                             <div class="row mb-1 tabs">
                                                 <div class="col-md-8 mb-2 tab-buttons">
-                                                    <button class="btn tab-btn btn-secondary active" width="200px" data-tab="#club_info">Club Info </button>
-                                                    <button class="btn tab-btn btn-outline-secondary custom-gap" width="200px" data-tab="#associated_members">Associated Members</button>
-                                                    <button class="btn tab-btn btn-outline-secondary custom-gap" width="200px" data-tab="#associated_coordinators">Associated Coordinators</button>
-                                                    <button class="btn tab-btn btn-outline-secondary custom-gap" width="200px" data-tab="#associated_events">Associated Events</button>
-                                                    <button class="btn tab-btn btn-outline-secondary custom-gap" width="200px" data-tab="#members_requests">Members Request</button>
+                                                    <button class="btn tab-btn btn-secondary active" width="500px" data-tab="#club_info">Club Info </button>
+                                                    <button class="btn tab-btn btn-outline-secondary custom-gap" width="500px" data-tab="#associated_members">Associated Members</button>
+                                                    <button class="btn tab-btn btn-outline-secondary custom-gap" width="500px" data-tab="#associated_coordinators">Associated Coordinators</button>
+                                                    <button class="btn tab-btn btn-outline-secondary custom-gap" width="500px" data-tab="#associated_events">Associated Events</button>
+                                                    <button class="btn tab-btn btn-outline-secondary custom-gap" width="500px" data-tab="#members_requests">Members Request</button>
                                                 </div>
                                             </div>
                                             <div class="tab-content">
@@ -278,6 +278,8 @@
             // Show/Hide Tabs
             $('.tab-content ' + tabId).show().siblings().hide();
         });
+
+
         $(document).ready(function() {
             $('.approve-btn').click(function() {
                 setApprovalStatus(this, 1);
@@ -287,7 +289,6 @@
                 setApprovalStatus(this, 2);
             });
         });
-
 
         function setApprovalStatus(button, status) {
             var dataId = $(button).data('id');

@@ -82,7 +82,7 @@
                                                             @endif
                                                         </td>
                                                         @if(Auth::user()->role == 'admin') 
-                                                            <td>{{ $coordinatorName }}</td>
+                                                            <td>{{ $event->coordinator ? $event->coordinator->name : 'N/A' }}</td>
                                                         @endif
                                                         <td>{{ \Carbon\Carbon::parse($event->start_date)->format('F d, Y') }} | {{ \Carbon\Carbon::parse($event->start_time)->format('h:i A') }}</td>
                                                         <td>{{ $event->venue }}</td>

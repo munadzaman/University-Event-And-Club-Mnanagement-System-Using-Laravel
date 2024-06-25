@@ -51,7 +51,6 @@
                                                             <th scope="row"><h4>No. of Attendees</h4></th>
                                                             <td><h4>{{ $attendeeCount }}</h4></td>
                                                         </tr>
-                                                        
                                                     </tbody>
                                                 </table>
                                                 @if($isAttendee)
@@ -59,7 +58,7 @@
                                                 @endif
 
                                                 @if($isLiveEvent && $isUserAttendee && !$isAttendee)
-                                                    <button class="btn btn-info mb-1" id="mark_attendance" data-id="{{ $event->id }}">Mark your Attendance</button>
+                                                    <p class="badge badge-success" style="font-size:15px">Event is Live Now!</p>
                                                 @endif
 
                                                 @if($eventAttendees && !$isLiveEvent)

@@ -10,4 +10,9 @@ class News extends Model
     use HasFactory;
 
     protected $fillable = ['id', 'title', 'date', 'category'];
+
+    public function getImageAttribute($value)
+    {
+        return json_decode($value, true);
+    }
 }

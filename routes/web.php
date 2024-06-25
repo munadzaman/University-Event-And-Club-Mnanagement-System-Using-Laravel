@@ -151,6 +151,7 @@ use App\Models\User;
     
     Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/notification', [NotificationController::class, 'index'])->name('notification.index');
+        Route::post('/send-custom-notification', [NotificationController::class, 'sendCustomNotification'])->name('send.custom.notification');
     });
 
     Route::middleware(['auth', 'verified'])->group(function () {

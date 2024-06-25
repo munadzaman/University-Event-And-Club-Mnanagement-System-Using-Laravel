@@ -30,17 +30,19 @@ class InformEvent extends Notification
      */
     public function via(object $notifiable): array
     {
-        return ['database'];
+        return ['database', 'mail'];
     }
 
     /**
      * Get the mail representation of the notification.
      */
-    public function toMail(object $notifiable): MailMessage
+    public function toMail($notifiable)
     {
         return (new MailMessage)
-                    ->line('The introduction to the notification.')
-                    ->action('Notification Action', url('/'))
+                    ->subject('Event has Created')
+                    ->line('New Event <b>' . $this->event->name . '</b> has created ')
+                    ->line('Event will start on ' . $this->event->start_date . ' ' . $this->event->start_time)
+                    ->action('View Notification', url('/'))
                     ->line('Thank you for using our application!');
     }
 

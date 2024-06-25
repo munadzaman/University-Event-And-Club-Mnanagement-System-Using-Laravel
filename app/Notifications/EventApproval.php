@@ -7,6 +7,10 @@ use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 
+use App\Models\Club;
+use App\Models\User;
+use App\Models\Event;
+
 class EventApproval extends Notification
 {
     use Queueable;
@@ -35,8 +39,23 @@ class EventApproval extends Notification
      */
     public function via($notifiable)
     {
-        return ['database'];
+        return ['database', 'mail'];
     }
+
+    public function toMail($notifiable)
+    {
+        $statusMessage = $this->status == 1 ? 'approved' : 'rejected';
+        $title = 'Event ' . ucfirst($statusMessage);
+        $description = 'The event ' . $this->event->name . ' has been ' . $statusMessage . '.';
+
+        return (new MailMessage)
+                    ->subject('Notification: ' . $title)
+                    ->line($title)
+                    ->line($description)
+                    ->action('View Notification', url('/'))
+                    ->line('Thank you for using our application!');
+    }
+
 
     /**
      * Get the array representation of the notification.

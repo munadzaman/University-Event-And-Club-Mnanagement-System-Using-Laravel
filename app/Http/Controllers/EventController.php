@@ -201,49 +201,37 @@ class EventController extends Controller
         // Get events specific to the coordinator
         $specific_events = Event::where('coordinator_id', $userId)->with('club')->get();
 
-        // Initialize $coordinatorName
-        $coordinatorName = null;
-
-        // If there are events, get the coordinator name from the first event
-        foreach ($events as $event) {
-            if (isset($event->coordinator)) {
-                $coordinatorName = $event->coordinator->name;
-                break;
-            }
-        }
-
-        // Access coordinator name for a specific event
-        $specific_event = Event::with(['club', 'coordinator'])->where('coordinator_id', $userId)->first();
-        if ($specific_event && isset($specific_event->coordinator)) {
-            $coordinatorName = $specific_event->coordinator->name;
-        } else {
-            // Handle case when no event is found for the coordinator ID
-        }
+        // Create an array of coordinator names for specific events
+        $coordinatorNames = $specific_events->map(function($event) {
+            return $event->coordinator ? $event->coordinator->name : 'N/A';
+        });
 
         $currentDateTime = Carbon::now();
 
         // Retrieve live events
         $live_events = Event::where(function($query) use ($currentDateTime) {
             $query->whereDate('start_date', '<=', $currentDateTime->toDateString())
-                  ->whereDate('end_date', '>=', $currentDateTime->toDateString());
+                ->whereDate('end_date', '>=', $currentDateTime->toDateString());
         })
         ->where(function($query) use ($currentDateTime) {
             $query->where(function($query) use ($currentDateTime) {
                 $query->whereDate('start_date', '=', $currentDateTime->toDateString())
-                      ->whereTime('start_time', '<=', $currentDateTime->toTimeString())
-                      ->whereDate('end_date', '=', $currentDateTime->toDateString())
-                      ->whereTime('end_time', '>=', $currentDateTime->toTimeString());
+                    ->whereTime('start_time', '<=', $currentDateTime->toTimeString())
+                    ->whereDate('end_date', '=', $currentDateTime->toDateString())
+                    ->whereTime('end_time', '>=', $currentDateTime->toTimeString());
             })
             ->orWhere(function($query) use ($currentDateTime) {
                 $query->whereDate('start_date', '<=', $currentDateTime->toDateString())
-                      ->whereDate('end_date', '>=', $currentDateTime->toDateString());
+                    ->whereDate('end_date', '>=', $currentDateTime->toDateString());
             });
         })
+        ->where('status', 1) // Adding the condition for status
         ->get();
+
 
         $studentEvents = Event::whereRaw("FIND_IN_SET(?, visible_to)", [$userId])->where('status', 1)->whereDate('start_date', '>', now())->get();
 
-        return view('events.index', compact('events', 'specific_events', 'coordinatorName', 'studentEvents', 'live_events'));
+        return view('events.index', compact('events', 'specific_events', 'coordinatorNames', 'studentEvents', 'live_events'));
     }
 
 

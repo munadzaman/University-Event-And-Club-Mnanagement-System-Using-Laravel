@@ -40,21 +40,31 @@
                 <section id="file-export">
                     <div class="row">
                         <div class="col-12">
+                            @if ($errors->any())
+                                <div class="alert alert-danger">
+                                    <ul>
+                                        @foreach ($errors->all() as $error)
+                                            <li>{{ $error }}</li>
+                                        @endforeach
+                                    </ul>
+                                </div>
+                            @endif
                             @if (session()->has('success'))
                                 <div class="alert alert-success">
                                     {{ session()->get('success') }}
                                 </div>
                             @endif
                             <div class="card">
-                                <div class="card-header">
-                                    <h4 class="card-title">Manage Students</h4>
-                                    <a class="heading-elements-toggle"><i class="la la-ellipsis-v font-medium-3"></i></a>
+                                <div class="card-header d-flex justify-content-between align-items-center">
+                                    <h4 class="card-title mb-0">Manage Students</h4>
+                                    <button class="btn btn-outline-success" id="mark_attendance" data-toggle="modal" data-target="#notificationModal">Send Notification</button>
                                 </div>
                                 <div class="card-content collapse show">
                                     <div class="card-body card-dashboard dataTables_wrapper dt-bootstrap">
                                         <table class="table table-striped table-bordered file-export">
                                             <thead>
                                                 <tr>
+                                                    <th><input type="checkbox" id="selectAllCheckbox"></th>
                                                     <th>S.No</th>
                                                     <th>Name</th>
                                                     <th>Email</th>
@@ -65,6 +75,7 @@
                                             <tbody>
                                                 @foreach($students as $student)
                                                 <tr>
+                                                    <td><input type="checkbox" class="student-checkbox" value="{{ $student->id }}"></td>
                                                     <td>{{ $loop->iteration }}</td>
                                                     <td>{{ $student->name }}</td>
                                                     <td>{{ $student->email }}</td>
@@ -75,13 +86,6 @@
                                                         <a href="student/edit/{{ $student->id }}" type="button" class="btn btn-warning btn-sm">Edit</a>
                                                         <a href="students/delete/{{ $student->id }}" type="button" class="btn btn-danger btn-sm">Delete</a>
                                                     </a>
-                                                    <!-- <form id="approveRejectForm" action="" method="POST" style="margin:2px">
-                                                        @csrf
-                                                        <button type="button" class="btn btn-success btn-sm approve-btn" data-id="">Approve</button>
-                                                        <button type="button" class="btn btn-secondary btn-sm reject-btn" data-id="">Reject</button>
-                                                        <input type="hidden" id="approvalStatus" name="approval_status">
-                                                        <input type="hidden" id="dataId" name="data_id">
-                                                    </form> -->
                                                 </td>
                                                 </tr>
                                                 @endforeach
@@ -96,6 +100,7 @@
                                                 </tr>
                                             </tfoot>
                                         </table>
+                                        
                                     </div>
                                 </div>
                             </div>
@@ -108,11 +113,71 @@
     </div>
     <!-- END: Content-->
 
+    <!-- Notification Modal -->
+    <div class="modal fade" id="notificationModal" tabindex="-1" role="dialog" aria-labelledby="notificationModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <form id="sendNotificationForm" method="POST" action="{{ route('send.custom.notification') }}">
+                @csrf
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="notificationModalLabel">Send Notification</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="notificationTitle">Title</label>
+                            <input type="text" class="form-control" id="notificationTitle" name="message" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="notificationDescription">Description</label>
+                            <textarea class="form-control" id="notificationDescription" name="description" rows="3" required></textarea>
+                        </div>
+                        <input type="hidden" id="allSelectedStudents" name="selected_students_1" value="{{ old('selected_students_1') }}">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Send Notification</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
     <!-- Modal -->
     
     @include('includes.footer') 
     <script>
-        
+        document.addEventListener("DOMContentLoaded", function() {
+        var selectAllCheckbox = document.getElementById("selectAllCheckbox");
+        var checkboxes = document.querySelectorAll(".student-checkbox");
+        var selectedStudentsInput = document.getElementById("allSelectedStudents");
+
+        function updateSelectedStudentsInput() {
+            var selectedStudents = Array.from(checkboxes)
+                .filter(checkbox => checkbox.checked)
+                .map(checkbox => checkbox.value);
+            selectedStudentsInput.value = selectedStudents.join(',');
+        }
+
+        // Attach the update function to the select all checkbox
+        selectAllCheckbox.addEventListener("change", function() {
+            checkboxes.forEach(function(checkbox) {
+                checkbox.checked = selectAllCheckbox.checked;
+            });
+            updateSelectedStudentsInput();
+        });
+
+        // Attach the update function to each student checkbox
+        checkboxes.forEach(function(checkbox) {
+            checkbox.addEventListener("change", updateSelectedStudentsInput);
+        });
+
+        // Initial call to update the hidden input field on page load
+        updateSelectedStudentsInput();
+        });
         
         $(document).ready(function(){
             $('.delete-student').click(function(event) {

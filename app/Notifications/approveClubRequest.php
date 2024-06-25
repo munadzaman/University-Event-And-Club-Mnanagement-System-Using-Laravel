@@ -6,23 +6,25 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
-use App\Models\User;
+use App\Models\Club;  // Make sure to include the Club model
+use App\Models\User;  // Make sure to include the User model
 
-class NewUserRegistered extends Notification
+class approveClubRequest extends Notification
 {
     use Queueable;
 
-    protected $user; // Declare $user property
+    protected $club;
+    protected $status;
+    protected $user;
 
     /**
      * Create a new notification instance.
-     *
-     * @param User $user The user who is registered
-     * @return void
      */
-    public function __construct(User $user)
+    public function __construct(Club $club, User $user, $status)
     {
+        $this->club = $club;
         $this->user = $user;
+        $this->status = $status;
     }
 
     /**
@@ -40,9 +42,10 @@ class NewUserRegistered extends Notification
      */
     public function toMail(object $notifiable): MailMessage
     {
-        return (new MailMessage)
-            ->subject('New User Registered')
-            ->line($this->user->name . 'has created an account.')
+            return (new MailMessage)
+            ->subject('Club Request has' . ($this->status == 1 ? 'Approved' : 'Rejected'))
+            ->line('Club Request has' . ($this->status == 1 ? 'Approved' : 'Rejected'))
+            ->line('Your joining request for ' . $this->club->name . ' has been ' . ($this->status == 1 ? 'approved' : 'rejected'))
             ->action('View Notification', url('/'))
             ->line('Thank you for using our application!');
     }
@@ -55,9 +58,9 @@ class NewUserRegistered extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            'message' => 'New User Registered',
-            'description' => $this->user->name . 'has created an account.',
-            'user_id' => $this->user->id,
+            'club_id' => $this->club->id,
+            'message' => 'Club Request has' . ($this->status == 1 ? 'Approved' : 'Rejected'),
+            'description' => 'Your joining request for ' . $this->club->name . ' has been ' . ($this->status == 1 ? 'approved' : 'rejected')
         ];
     }
 }

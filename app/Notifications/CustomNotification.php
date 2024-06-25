@@ -6,23 +6,21 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
-use App\Models\User;
 
-class NewUserRegistered extends Notification
+class CustomNotification extends Notification
 {
     use Queueable;
 
-    protected $user; // Declare $user property
+    protected $message;
+    protected $description;
 
     /**
      * Create a new notification instance.
-     *
-     * @param User $user The user who is registered
-     * @return void
      */
-    public function __construct(User $user)
+    public function __construct($message, $description)
     {
-        $this->user = $user;
+        $this->message = $message;
+        $this->description = $description;
     }
 
     /**
@@ -41,10 +39,10 @@ class NewUserRegistered extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject('New User Registered')
-            ->line($this->user->name . 'has created an account.')
-            ->action('View Notification', url('/'))
-            ->line('Thank you for using our application!');
+                    ->line($this->message)
+                    ->line($this->description)
+                    ->action('Notification Action', url('/'))
+                    ->line('Thank you for using our application!');
     }
 
     /**
@@ -55,9 +53,8 @@ class NewUserRegistered extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            'message' => 'New User Registered',
-            'description' => $this->user->name . 'has created an account.',
-            'user_id' => $this->user->id,
+            'message' => $this->message,
+            'description' => $this->description,
         ];
     }
 }

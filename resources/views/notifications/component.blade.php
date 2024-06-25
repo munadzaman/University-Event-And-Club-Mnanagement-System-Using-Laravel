@@ -15,8 +15,12 @@
                 <div class="media">
                     <div class="media-left align-self-center"><i class="ft-plus-square icon-bg-circle bg-cyan mr-0"></i></div>
                     <div class="media-body">
+                    @if(isset($notification->data['message']))
                         <h6 class="media-heading">{!! $notification->data['message'] !!}</h6>
-                        <p class="notification-text font-small-3 text-muted">{{ $notification->data['description'] ?? 'No description available' }}</p>
+                    @else
+                        <h6 class="media-heading">No message available</h6>
+                    @endif
+                        <p class="notification-text font-small-3 text-muted">{!! $notification->data['description'] ?? 'No description available' !!}</p>
                         <small>
                             <time class="media-meta text-muted" datetime="{{ $notification->created_at }}">{{ $notification->created_at->diffForHumans() }}</time>
                         </small>

@@ -160,7 +160,6 @@
                                         </thead>
                                         
                                         <tbody>
-                                            
                                             @foreach($attendees as $attendee)
                                                 <tr>
                                                     @if($isLiveEvent)

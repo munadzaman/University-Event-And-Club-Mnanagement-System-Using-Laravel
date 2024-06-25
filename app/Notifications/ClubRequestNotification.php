@@ -6,22 +6,21 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use App\Models\Club;
 use App\Models\User;
 
-class NewUserRegistered extends Notification
+class ClubRequestNotification extends Notification
 {
     use Queueable;
-
-    protected $user; // Declare $user property
-
+    protected $club;
+    protected $user;
+    
     /**
      * Create a new notification instance.
-     *
-     * @param User $user The user who is registered
-     * @return void
      */
-    public function __construct(User $user)
+    public function __construct(Club $club, User $user)
     {
+        $this->club = $club;
         $this->user = $user;
     }
 
@@ -41,8 +40,8 @@ class NewUserRegistered extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject('New User Registered')
-            ->line($this->user->name . 'has created an account.')
+            ->subject('Club Joining Request')
+            ->line('<strong>' . $this->user->name . '</strong>' . ' is requested to join club ' . '<strong>' . $this->club->name . '</strong>.')
             ->action('View Notification', url('/'))
             ->line('Thank you for using our application!');
     }
@@ -55,9 +54,9 @@ class NewUserRegistered extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            'message' => 'New User Registered',
-            'description' => $this->user->name . 'has created an account.',
-            'user_id' => $this->user->id,
+            'club_id' => $this->club->id,
+            'message' => 'Club Joining Request',
+            'description' => '<strong>' . $this->user->name . '</strong>' . ' is requested to join club ' . '<strong>' . $this->club->name . '</strong>.'
         ];
     }
 }
