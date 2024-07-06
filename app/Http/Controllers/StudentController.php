@@ -133,28 +133,42 @@ class StudentController extends Controller
         $endDateOfWeek = Carbon::now()->endOfWeek();
         $currentDateTime = Carbon::now();
         
-        $studentEvents = Event::whereRaw("FIND_IN_SET(?, visible_to)", [$userId])->where('status', 1)->whereDate('start_date', '>', now())->get();
-        
-        $currentDateTime = Carbon::now(); // Ensure $currentDateTime is defined
+        $studentEvents = Event::whereRaw("FIND_IN_SET(?, visible_to)", [$userId])
+    ->where('status', 1)
+    ->where(function($query) use ($currentDateTime) {
+        $query->whereDate('start_date', '>', $currentDateTime->toDateString())
+              ->orWhere(function($subQuery) use ($currentDateTime) {
+                  $subQuery->whereDate('start_date', '=', $currentDateTime->toDateString())
+                           ->whereTime('start_time', '>', $currentDateTime->toTimeString());
+              });
+    })
+    ->get();
 
-        $live_events = Event::where(function($query) use ($currentDateTime) {
+        $currentDateTime = Carbon::now();
+        $currentDate = $currentDateTime->toDateString();
+        $currentTime = $currentDateTime->toTimeString(); // Ensure $currentDateTime is defined
+
+        $currentDateTime = now();
+        $userId = auth()->id(); // Assuming you're getting the current authenticated user
+
+        $currentDateTime = now();
+        $userId = auth()->id(); // Assuming you're getting the current authenticated user
+
+        $live_events = Event::whereRaw("FIND_IN_SET(?, visible_to)", [$userId])
+            ->where('status', 1)
+            ->where(function($query) use ($currentDateTime) {
+                $query->where(function($query) use ($currentDateTime) {
                     $query->whereDate('start_date', '<=', $currentDateTime->toDateString())
-                        ->whereDate('end_date', '>=', $currentDateTime->toDateString());
-                })
-                ->where(function($query) use ($currentDateTime) {
-                    $query->where(function($query) use ($currentDateTime) {
-                        $query->whereDate('start_date', '=', $currentDateTime->toDateString())
-                            ->whereTime('start_time', '<=', $currentDateTime->toTimeString())
-                            ->whereDate('end_date', '=', $currentDateTime->toDateString())
-                            ->whereTime('end_time', '>=', $currentDateTime->toTimeString());
-                    })
-                    ->orWhere(function($query) use ($currentDateTime) {
-                        $query->whereDate('start_date', '<=', $currentDateTime->toDateString())
-                            ->whereDate('end_date', '>=', $currentDateTime->toDateString());
-                    });
-                })
-                ->where('status', 1) // Adding the condition for status
-                ->get();
+                        ->whereDate('end_date', '>=', $currentDateTime->toDateString())
+                        ->where(function($query) use ($currentDateTime) {
+                            $query->whereTime('start_time', '<=', $currentDateTime->toTimeString())
+                                    ->whereTime('end_time', '>=', $currentDateTime->toTimeString());
+                        });
+                });
+            })
+            ->get();
+
+
 
 
         // Count attendees for each event

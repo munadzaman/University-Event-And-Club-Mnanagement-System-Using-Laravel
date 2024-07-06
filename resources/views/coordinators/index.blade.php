@@ -30,7 +30,7 @@
                 <div class="content-header-right col-md-6 col-12">
                     <div class="btn-group float-md-right">
                         <a href="{{ route('coordinators.add') }}">
-                        <button class="btn btn-info mb-1" type="button">Create a New Coordinator</button>
+                        <button class="btn btn-info mb-1" type="button">Register New Coordinator</button>
                         </a>
                     </div>
                 </div>
@@ -82,16 +82,7 @@
                                                 @endforeach
                                             </tbody>
 
-                                            <tfoot>
-                                                <tr>
-                                                    <th>S.No</th>
-                                                    <th>Full Name</th>
-                                                    <th>Login Id</th>
-                                                    <th>Email</th>
-                                                    <th>Phone</th>
-                                                    <th>Action</th>
-                                                </tr>
-                                            </tfoot>
+                                            
                                         </table>
                                     </div>
                                 </div>

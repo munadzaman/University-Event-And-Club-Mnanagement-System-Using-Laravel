@@ -13,6 +13,46 @@ class NewsController extends Controller
         return view('news.index', compact('news'));
     }
 
+    // Show the edit form
+    public function edit($id)
+    {
+        $news = News::findOrFail($id);
+        return view('news.edit', compact('news'));
+    }
+
+
+    // Handle the update request
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'date' => 'required|date',
+            'category' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'image.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        ]);
+
+        $news = News::findOrFail($id);
+        $news->title = $request->input('title');
+        $news->date = $request->input('date');
+        $news->category = $request->input('category');
+        $news->description = $request->input('description');
+
+        // Handling multiple images upload
+        if ($request->hasFile('image')) {
+            $images = [];
+            foreach ($request->file('image') as $file) {
+                $path = $file->store('public/images/news_images');
+                $images[] = basename($path);
+            }
+            $news->image = $images;
+        }
+
+        $news->save();
+
+        return redirect()->route('news.index')->with('success', 'News updated successfully.');
+    }
+
     public function store(Request $request): RedirectResponse
 {
     // Validate the request
@@ -61,5 +101,7 @@ class NewsController extends Controller
         $clubs = News::find($request->id);
         $clubs->delete();
         return redirect()->back();
+
+        
     }
 }

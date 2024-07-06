@@ -1,62 +1,73 @@
-@include('includes.head')
-
-<body class="vertical-layout vertical-menu-modern 2-columns   fixed-navbar" data-open="click" data-menu="vertical-menu-modern" data-col="2-columns">
+@include('includes.sub_head')
+<!-- BEGIN: Body-->
+<body class="horizontal-layout horizontal-menu 2-columns" data-open="hover" data-menu="horizontal-menu" data-col="2-columns">
     
-    @include('includes.header')
+    @include('includes.sub_header')
     
-
-
-    @include('includes.sidemenu')
     <!-- BEGIN: Content-->
     <div class="app-content content">
         <div class="content-overlay"></div>
         <div class="content-wrapper">
-        <div class="content-header row">
-                <div class="content-header-left col-md-6 col-12 mb-2 breadcrumb-new">
-                    <h3 class="content-header-title mb-0 d-inline-block">News</h3>
-                    <div class="row breadcrumbs-top d-inline-block">
-                        <div class="breadcrumb-wrapper col-12">
-                            <ol class="breadcrumb">
-                                <li class="breadcrumb-item"><a href="index.html">EventifyU</a>
-                                </li>
-                                <li class="breadcrumb-item active">News
-                                </li>
-                            </ol>
-                        </div>
-                    </div>
-                </div>
-                <div class="content-header-right col-md-6 col-12">
-                    <div class="btn-group float-md-right">
-                        <a href="{{ route('news.add') }}">
-                        <button class="btn btn-info mb-1" type="button">Create New News</button>
-                        </a>
-                    </div>
-                </div>
-            </div>
             <div class="content-body">
-                <!-- File export table -->
-                <section id="file-export">
+                <section id="news-details">
                     <div class="row">
-                        <div class="col-12">
+                        <div class="col-lg-12 col-md-12">
                             <div class="card">
                                 <div class="card-content collapse show">
                                     <div class="card-body card-dashboard dataTables_wrapper dt-bootstrap">
                                         <div class="container">
-                                            <div class="tab-content">
-                                                <div>
-                                                    <div class="row">
-                                                        <div class="col-md-6">
-                                                            <h3>{{ $news->title }}</h3>
-                                                            <p style="color:#ccc">{{ $news->category }}</p>
-                                                            <p>
-                                                            {{ $news->description }}
-                                                            </p>
+                                            <div class="row">
+                                                <!-- News Content -->
+                                                <div class="col-md-6">
+                                                    <h3>{{ $news->title ?? 'No title available' }}</h3>
+                                                    <p style="color:#ccc">{{ is_array($news->category) ? implode(', ', $news->category) : ($news->category ?? 'No category available') }}</p>
+                                                    <p>{{ $news->description ?? 'No description available' }}</p>
+                                                </div>
+                                                <!-- Carousel for News Images -->
+                                                <div class="col-md-6 col-sm-12">
+                                                    <div class="card">
+                                                        <div class="card-header">
+                                                            <h4 class="card-title">Images</h4>
                                                         </div>
-                                                        <div class="col-md-6">
-                                                            <img src="{{ asset('images/news_images/' . $news->image) }}" class="height-250 img-responsive" alt="Card image">
+                                                        <div class="card-content">
+                                                            <div class="card-body">
+                                                                <div id="news-carousel" class="carousel slide" data-ride="carousel">
+                                                                    <ol class="carousel-indicators">
+                                                                        @if(is_array($news->image) && count($news->image) > 0)
+                                                                            @foreach ($news->image as $index => $image)
+                                                                                <li data-target="#news-carousel" data-slide-to="{{ $index }}" class="{{ $index == 0 ? 'active' : '' }}"></li>
+                                                                            @endforeach
+                                                                        @else
+                                                                            <li data-target="#news-carousel" data-slide-to="0" class="active"></li>
+                                                                        @endif
+                                                                    </ol>
+                                                                    <div class="carousel-inner" role="listbox">
+                                                                        @if(is_array($news->image) && count($news->image) > 0)
+                                                                            @foreach ($news->image as $index => $image)
+                                                                                <div class="carousel-item {{ $index == 0 ? 'active' : '' }}">
+                                                                                    <img src="{{ asset('images/news_images/' . $image) }}" class="img-fluid" alt="Slide {{ $index + 1 }}">
+                                                                                </div>
+                                                                            @endforeach
+                                                                        @else
+                                                                            <div class="carousel-item active">
+                                                                                <img src="{{ asset('path_to_default_image/default.jpg') }}" class="img-fluid" alt="Default Slide">
+                                                                            </div>
+                                                                        @endif
+                                                                    </div>
+                                                                    <a class="carousel-control-prev" href="#news-carousel" role="button" data-slide="prev">
+                                                                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                                                        <span class="sr-only">Previous</span>
+                                                                    </a>
+                                                                    <a class="carousel-control-next" href="#news-carousel" role="button" data-slide="next">
+                                                                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                                                        <span class="sr-only">Next</span>
+                                                                    </a>
+                                                                </div>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
+                                                <!-- End Carousel -->
                                             </div>
                                         </div>
                                     </div>
@@ -65,30 +76,11 @@
                         </div>
                     </div>
                 </section>
-                <!-- File export table -->
             </div>
         </div>
     </div>
-        <!-- END: Content-->
+    <!-- END: Content-->
 
-    <!-- Modal -->
-    <div class="modal fade text-left" id="iconModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel2" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <!-- Dynamic modal title -->
-                    <h4 class="modal-title text-center" id="modalTitle"><i class="la la-road2"></i></h4>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <!-- Image displayed here -->
-                    <img id="modalImage" src="" class="img-fluid">
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    @include('includes.footer')
-
+    @include('includes.sub_footer')
+</body>
+</html>

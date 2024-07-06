@@ -21,12 +21,12 @@
                         
                         <li class="dropdown dropdown-notification nav-item">
                             <!-- <a class="nav-link nav-link-label" href="#" data-toggle="dropdown">Score<span class="badge badge-pill badge-danger badge-up badge-glow">5</span></a> -->
-                            <a class="nav-link nav-link-label" href="#" data-toggle="dropdown">Event Score: {{ $eventScore }}</a>
+                            <a class="nav-link nav-link-label" href="#" data-toggle="dropdown">ScorunScore: {{ $eventScore }}</a>
 
                         
                         </li>
                         <li class="dropdown dropdown-user nav-item"><a class="dropdown-toggle nav-link dropdown-user-link" href="#" data-toggle="dropdown"><span class="mr-1 user-name text-bold-700">{{ Auth::user()->name }}</span><span class="avatar avatar-online"><img src="../../../app-assets/images/portrait/small/avatar-s-19.png" alt="avatar"><i></i></span></a>
-                            <div class="dropdown-menu dropdown-menu-right"><a class="dropdown-item" href="{{ route('student.profile', ['id' => Auth::user()->id]) }}"><i class="ft-user"></i> Edit Profile</a>
+                            <div class="dropdown-menu dropdown-menu-right"><a class="dropdown-item" href="{{ route('student.profile', ['id' => Auth::user()->id]) }}"><i class="ft-user"></i> View Profile</a>
                                 <!-- <div class="dropdown-divider"></div><a class="dropdown-item" href="login-with-bg-image.html"><i class="ft-power"></i> Logout</a> -->
                                 <form method="POST" action="{{ route('logout') }}">
                                 @csrf

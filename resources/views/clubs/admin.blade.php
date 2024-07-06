@@ -28,10 +28,13 @@
                     </div>
                 </div>
                 <div class="content-header-right col-md-6 col-12">
+                @if(Auth::user()->role == 'admin')
+
                     <div class="btn-group float-md-right">
                         <a href="{{ route('clubs.add') }}">
                         <button class="btn btn-info mb-1" type="button">Create New Club</button>
                         </a>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -109,15 +112,7 @@
                                                     @endforeach
                                                 @endif
                                             </tbody>
-                                            <tfoot>
-                                                <tr>
-                                                    <th>S.No</th>
-                                                    <th>Name</th>
-                                                    <th>Logo</th>
-                                                    <th>Date</th>
-                                                    <th>Actions</th>
-                                                </tr>
-                                            </tfoot>
+                                            
                                         </table>
                                     </div>
                                 </div>

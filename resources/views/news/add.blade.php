@@ -89,7 +89,7 @@
 
                                                     <div class="col-md-4">
                                                         <div class="form-group">
-                                                            <label for="projectinput4">Images</label>
+                                                            <label for="projectinput4">Images (Select 3 images)</label>
                                                             <input type="file" id="projectinput4" name="image[]" class="form-control" multiple required>
                                                         </div>
                                                     </div>

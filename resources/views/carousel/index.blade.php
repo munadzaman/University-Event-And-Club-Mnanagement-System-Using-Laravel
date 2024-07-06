@@ -45,7 +45,7 @@
                                 @endif
                                 <div class="card">
                                     <div class="card-header">
-                                        <h4 class="card-title">Manage Carousel Images</h4>
+                                        <h4 class="card-title">Manage Carousel Images ( 3 pictures at a time) </h4>
                                         <a class="heading-elements-toggle"><i class="la la-ellipsis-v font-medium-3"></i></a>
                                     </div>
                                     <div class="card-content collapse show">
@@ -80,13 +80,7 @@
                                                     </tr>
                                                     @endforeach
                                                 </tbody>
-                                                <tfoot>
-                                                    <tr>
-                                                        <th>S.No</th>
-                                                        <th>Image</th>
-                                                        <th>Action</th>
-                                                    </tr>
-                                                </tfoot>
+                                                
                                             </table>
                                         </div>
                                     </div>

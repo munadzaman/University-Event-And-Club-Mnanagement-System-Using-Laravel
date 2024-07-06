@@ -30,11 +30,7 @@
                     </div>
                 </div>
                 <div class="content-header-right col-md-6 col-12">
-                    <div class="btn-group float-md-right">
-                        <a href="">
-                        <button class="btn btn-info mb-1" type="button">Edit Coordinators</button>
-                        </a>
-                    </div>
+                    
                 </div>
             </div>
             <div class="content-body">

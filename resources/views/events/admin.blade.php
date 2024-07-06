@@ -154,20 +154,7 @@
                                                     @endforeach
                                                 @endif
                                             </tbody>
-                                            <tfoot>
-                                                <tr>
-                                                <th>S.No</th>
-                                                    <th>Title</th>
-                                                    @if(Auth::user()->role == 'admin') 
-                                                        <th>Coordinator</th>
-                                                    @endif
-                                                    <th>Start Date & Time</th>
-                                                    <th>Venue</th>
-                                                    <th>Club</th>
-                                                    <th>Image</th>
-                                                    <th>Action</th>
-                                                </tr>
-                                            </tfoot>
+                                            
                                         </table>
                                     </div>
                                 </div>

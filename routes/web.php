@@ -76,13 +76,21 @@ use App\Models\User;
         Route::post('/news/add', [NewsController::class, 'store'])->name('news.store');
         Route::get('/news/view/{id}', [NewsController::class, 'view'])->name('news.view');
         Route::get('/news/delete/{id}', [NewsController::class, 'delete'])->name('news.delete');
+        Route::get('news/{id}/edit', [NewsController::class, 'edit'])->name('news.edit');
+        // Route to show the edit form
+        Route::get('/news/edit/{id}', [NewsController::class, 'edit'])->name('news.edit');
+        // Route to handle the update request
+        Route::put('/news/{id}', [NewsController::class, 'update'])->name('news.update');
+
+
+        
     });
 
     Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/students', [StudentController::class, 'index'])->name('students.index');
         Route::get('/students/add', [StudentController::class, 'add'])->name('students.add');
         Route::post('/students/add', [StudentController::class, 'store'])->name('students.store');
-        Route::get('/student/delete', [StudentController::class, 'delete'])->name('students.delete');
+        Route::get('/students/delete/{id}', [StudentController::class, 'delete'])->name('students.delete');
         Route::get('/student/view/{id}', [StudentController::class, 'view'])->name('students.view');
         Route::get('/student/edit/{id}', [StudentController::class, 'edit'])->name('students.edit');
         Route::post('/student/update/{id}', [StudentController::class, 'update'])->name('student.update');

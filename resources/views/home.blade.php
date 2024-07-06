@@ -73,11 +73,6 @@
                                                                                 <li class="support-ticket-item  text-light">
                                                                                     <i class="font-small-3 la la-calendar"></i>
                                                                                     {{ \Carbon\Carbon::parse($event->start_date)->format('F d, Y') }}
-                                                                                </li>
-                                                                                <li class="support-ticket-item  text-light">
-                                                                                    <i class="font-small-3 ft-user"></i>
-                                                                                    13
-                                                                                </li>
                                                                             </ul>
                                                                         </div>
                                                                     </div>
@@ -133,10 +128,6 @@
                                                                                 <li class="support-ticket-item  text-light">
                                                                                     <i class="font-small-3 la la-calendar"></i>
                                                                                     {{ \Carbon\Carbon::parse($event->start_date)->format('F d, Y') }}
-                                                                                </li>
-                                                                                <li class="support-ticket-item  text-light">
-                                                                                    <i class="font-small-3 ft-user"></i>
-                                                                                    13
                                                                                 </li>
                                                                             </ul>
                                                                         </div>

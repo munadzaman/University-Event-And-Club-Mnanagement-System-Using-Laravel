@@ -148,13 +148,7 @@
                                                         </tr>
                                                     @endforeach
                                                 </tbody>
-                                            <tfoot>
-                                                <tr>
-                                                    <th>S.No</th>
-                                                    <th>Club</th>
-                                                    <th>Image</th>
-                                                </tr>
-                                            </tfoot>
+
                                         </table>
                                         </div>
                                     </div>
@@ -172,14 +166,7 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                    
-                                            <tfoot>
-                                                <tr>
-                                                    <th>S.No</th>
-                                                    <th>Club</th>
-                                                    <th>Image</th>
-                                                </tr>
-                                            </tfoot>
+                                                
                                         </table>
                                         </div>
                                     </div>

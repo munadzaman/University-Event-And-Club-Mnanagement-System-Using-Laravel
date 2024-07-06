@@ -50,12 +50,6 @@
                                                         <div class="row">
                                                             <div class="col border-right-blue-grey border-right-lighten-4">
                                                                 <div class="card-body text-center">
-                                                                    <h1 class="display-4">{{ $clubCount }}</h1>
-                                                                    <span>Total Clubs</span>
-                                                                </div>
-                                                            </div>
-                                                            <div class="col border-right-blue-grey border-right-lighten-4">
-                                                                <div class="card-body text-center">
                                                                     <h1 class="display-4">{{ $pendingClubsCount }}</h1>
                                                                     <span>Requested Clubs</span>
                                                                 </div>
@@ -69,7 +63,7 @@
                                                             <div class="col border-right-blue-grey border-right-lighten-4">
                                                                 <div class="card-body text-center">
                                                                     <h1 class="display-4">{{ $approvedclubsCount }}</h1>
-                                                                    <span>Approved Clubs</span>
+                                                                    <span>Joined Clubs</span>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -84,26 +78,8 @@
                                                         <div class="row">
                                                             <div class="col border-right-blue-grey border-right-lighten-4">
                                                                 <div class="card-body text-center">
-                                                                    <h1 class="display-4">{{ $upcomingStudentEvents }}</h1>
-                                                                    <span>Total Events</span>
-                                                                </div>
-                                                            </div>
-                                                            <div class="col border-right-blue-grey border-right-lighten-4">
-                                                                <div class="card-body text-center">
-                                                                    <h1 class="display-4">{{ $studentScore }}</h1>
-                                                                    <span>Attended Events</span>
-                                                                </div>
-                                                            </div>
-                                                            <div class="col border-right-blue-grey border-right-lighten-4">
-                                                                <div class="card-body text-center">
                                                                     <h1 class="display-4">{{ $eventScore }}</h1>
-                                                                    <span>Total Score</span>
-                                                                </div>
-                                                            </div>
-                                                            <div class="col border-right-blue-grey border-right-lighten-4">
-                                                                <div class="card-body text-center">
-                                                                    <h1 class="display-4">{{ $upcomingEvents }}</h1>
-                                                                    <span>Upcoming Events</span>
+                                                                    <span>Total ScorunScore</span>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -150,10 +126,6 @@
                                                     </div>
                                                 </div>
                                                 <div class="col-12">
-                                                </div>
-                                                <div class="col-12 d-flex flex-sm-row flex-column justify-content-end mt-1">
-                                                    <button type="submit" class="btn btn-primary glow mb-1 mb-sm-0 mr-0 mr-sm-1">Save
-                                                        changes</button>
                                                 </div>
                                             </div>
                                         </form>

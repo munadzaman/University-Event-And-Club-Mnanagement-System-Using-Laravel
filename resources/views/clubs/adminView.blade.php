@@ -72,10 +72,13 @@
                     </div>
                 </div>
                 <div class="content-header-right col-md-6 col-12">
+                @if(Auth::user()->role == 'admin')
+
                     <div class="btn-group float-md-right">
                         <a href="{{ route('clubs.add') }}">
                         <button class="btn btn-info mb-1" type="button">Create New Club</button>
                         </a>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -130,12 +133,7 @@
                                                             </tr>
                                                             @endforeach
                                                         </tbody>
-                                                        <tfoot>
-                                                            <tr>
-                                                                <th>S.No</th>
-                                                                <th>Name</th>
-                                                            </tr>
-                                                        </tfoot>
+                                                        
                                                     </table>
                                                 </div>
 
@@ -157,12 +155,7 @@
                                                             </tr>
                                                             @endforeach
                                                         </tbody>
-                                                        <tfoot>
-                                                            <tr>
-                                                                <th>S.No</th>
-                                                                <th>Name</th>
-                                                            </tr>
-                                                        </tfoot>
+                                                        
                                                     </table>
                                                 </div>
 
@@ -184,12 +177,7 @@
                                                             </tr>
                                                             @endforeach
                                                         </tbody>
-                                                        <tfoot>
-                                                            <tr>
-                                                                <th>S.No</th>
-                                                                <th>Name</th>
-                                                            </tr>
-                                                        </tfoot>
+                                                        
                                                     </table>
                                                 </div>
                                                 <div class="tab" id="members_requests">
@@ -221,13 +209,7 @@
                                                                 </tr>
                                                                 @endforeach
                                                         </tbody>
-                                                        <tfoot>
-                                                            <tr>
-                                                                <th>S.No</th>
-                                                                <th>Name</th>
-                                                                <th>Action</th>
-                                                            </tr>
-                                                        </tfoot>
+                                                        
                                                     </table>
                                                 </div>
                                             </div>

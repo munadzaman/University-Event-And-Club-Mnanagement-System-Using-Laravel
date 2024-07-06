@@ -111,7 +111,7 @@
                                                     </div>
                                                 </div>
                                                 <div class="form-actions">
-                                                    <a href="index.php">
+                                                    <a href="{{ route('coordinators.index') }}">
                                                         <button type="button" class="btn btn-warning mr-1">
                                                             <i class="ft-x"></i> Cancel
                                                         </button>

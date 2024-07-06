@@ -1,12 +1,9 @@
 @include('includes.head')
 
 <!-- BEGIN: Body-->
+<body class="vertical-layout vertical-menu-modern 2-columns fixed-navbar" data-open="click" data-menu="vertical-menu-modern" data-col="2-columns">
 
-<body class="vertical-layout vertical-menu-modern 2-columns   fixed-navbar" data-open="click" data-menu="vertical-menu-modern" data-col="2-columns">
-    
     @include('includes.header')
-    
-
 
     @include('includes.sidemenu')
     <!-- BEGIN: Content-->
@@ -19,20 +16,22 @@
                     <div class="row breadcrumbs-top d-inline-block">
                         <div class="breadcrumb-wrapper col-12">
                             <ol class="breadcrumb">
-                                <li class="breadcrumb-item"><a href="index.html">EventifyU</a>
-                                </li>
-                                <li class="breadcrumb-item active">Students
-                                </li>
+                                <li class="breadcrumb-item"><a href="{{ route('students.home') }}">EventifyU</a></li>
+                                <li class="breadcrumb-item active">Students</li>
                             </ol>
                         </div>
                     </div>
                 </div>
                 <div class="content-header-right col-md-6 col-12">
+                @if(Auth::user()->role == 'admin')
+
                     <div class="btn-group float-md-right">
+
                         <a href="{{ route('students.add') }}">
-                        <button class="btn btn-info mb-1" type="button">Create a New Student</button>
+                            <button class="btn btn-info mb-1" type="button">Register New Student</button>
                         </a>
                     </div>
+                    @endif
                 </div>
             </div>
             <div class="content-body">
@@ -57,14 +56,19 @@
                             <div class="card">
                                 <div class="card-header d-flex justify-content-between align-items-center">
                                     <h4 class="card-title mb-0">Manage Students</h4>
-                                    <button class="btn btn-outline-success" id="mark_attendance" data-toggle="modal" data-target="#notificationModal">Send Notification</button>
+                                    @if(Auth::user()->role == 'admin')
+                                    <button class="btn btn-outline-success" id="mark_attendance" data-toggle="modal" data-target="#notificationModal">Send Mail and Notification</button>
+                                    @endif
                                 </div>
                                 <div class="card-content collapse show">
                                     <div class="card-body card-dashboard dataTables_wrapper dt-bootstrap">
                                         <table class="table table-striped table-bordered file-export">
                                             <thead>
                                                 <tr>
+                                                @if(Auth::user()->role == 'admin')
+
                                                     <th><input type="checkbox" id="selectAllCheckbox"></th>
+                                                    @endif
                                                     <th>S.No</th>
                                                     <th>Name</th>
                                                     <th>Email</th>
@@ -74,33 +78,27 @@
                                             </thead>
                                             <tbody>
                                                 @foreach($students as $student)
-                                                <tr>
-                                                    <td><input type="checkbox" class="student-checkbox" value="{{ $student->id }}"></td>
-                                                    <td>{{ $loop->iteration }}</td>
-                                                    <td>{{ $student->name }}</td>
-                                                    <td>{{ $student->email }}</td>
-                                                    <td>{{ $eventAttendeesCount[$student->id] }}</td>
-                                                    <td><a href="student/delete/{{ $student->id }}" class="delete-student" data-id="{{ $student->id }}"
-                                                        onclick="confirmDelete({{ $student->id }})">
-                                                        <a href="student/view/{{ $student->id }}" type="button" class="btn btn-primary btn-sm">View</a>
-                                                        <a href="student/edit/{{ $student->id }}" type="button" class="btn btn-warning btn-sm">Edit</a>
-                                                        <a href="students/delete/{{ $student->id }}" type="button" class="btn btn-danger btn-sm">Delete</a>
-                                                    </a>
-                                                </td>
-                                                </tr>
+                                                    <tr>
+                                                    @if(Auth::user()->role == 'admin')
+
+                                                        <td><input type="checkbox" class="student-checkbox" value="{{ $student->id }}"></td>
+                                                        @endif
+                                                        <td>{{ $loop->iteration }}</td>
+                                                        <td>{{ $student->name }}</td>
+                                                        <td>{{ $student->email }}</td>
+                                                        <td>{{ $eventAttendeesCount[$student->id] }}</td>
+                                                        <td>
+                                                            <a href="{{ route('students.view', ['id' => $student->id]) }}" class="btn btn-primary btn-sm">View</a>
+                                                            @if(Auth::user()->role == 'admin')
+
+                                                            <a href="{{ route('students.edit', ['id' => $student->id]) }}" class="btn btn-warning btn-sm">Edit</a>
+                                                            <a href="#" class="btn btn-danger btn-sm delete-student" data-id="{{ $student->id }}">Delete</a>
+                                                            @endif
+                                                        </td>
+                                                    </tr>
                                                 @endforeach
                                             </tbody>
-                                            <tfoot>
-                                                <tr>
-                                                    <th>S.No</th>
-                                                    <th>Name</th>
-                                                    <th>Email</th>
-                                                    <th>Score</th>
-                                                    <th>Action</th>
-                                                </tr>
-                                            </tfoot>
                                         </table>
-                                        
                                     </div>
                                 </div>
                             </div>
@@ -120,7 +118,7 @@
                 @csrf
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="notificationModalLabel">Send Notification</h5>
+                        <h5 class="modal-title" id="notificationModalLabel">Send Mail and Notification</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -138,52 +136,50 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Send Notification</button>
+                        <button type="submit" class="btn btn-primary">Send</button>
                     </div>
                 </div>
             </form>
         </div>
     </div>
 
+    @include('includes.footer')
 
-    <!-- Modal -->
-    
-    @include('includes.footer') 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-        var selectAllCheckbox = document.getElementById("selectAllCheckbox");
-        var checkboxes = document.querySelectorAll(".student-checkbox");
-        var selectedStudentsInput = document.getElementById("allSelectedStudents");
+            var selectAllCheckbox = document.getElementById("selectAllCheckbox");
+            var checkboxes = document.querySelectorAll(".student-checkbox");
+            var selectedStudentsInput = document.getElementById("allSelectedStudents");
 
-        function updateSelectedStudentsInput() {
-            var selectedStudents = Array.from(checkboxes)
-                .filter(checkbox => checkbox.checked)
-                .map(checkbox => checkbox.value);
-            selectedStudentsInput.value = selectedStudents.join(',');
-        }
+            function updateSelectedStudentsInput() {
+                var selectedStudents = Array.from(checkboxes)
+                    .filter(checkbox => checkbox.checked)
+                    .map(checkbox => checkbox.value);
+                selectedStudentsInput.value = selectedStudents.join(',');
+            }
 
-        // Attach the update function to the select all checkbox
-        selectAllCheckbox.addEventListener("change", function() {
-            checkboxes.forEach(function(checkbox) {
-                checkbox.checked = selectAllCheckbox.checked;
+            // Attach the update function to the select all checkbox
+            selectAllCheckbox.addEventListener("change", function() {
+                checkboxes.forEach(function(checkbox) {
+                    checkbox.checked = selectAllCheckbox.checked;
+                });
+                updateSelectedStudentsInput();
             });
+
+            // Attach the update function to each student checkbox
+            checkboxes.forEach(function(checkbox) {
+                checkbox.addEventListener("change", updateSelectedStudentsInput);
+            });
+
+            // Initial call to update the hidden input field on page load
             updateSelectedStudentsInput();
         });
 
-        // Attach the update function to each student checkbox
-        checkboxes.forEach(function(checkbox) {
-            checkbox.addEventListener("change", updateSelectedStudentsInput);
-        });
-
-        // Initial call to update the hidden input field on page load
-        updateSelectedStudentsInput();
-        });
-        
         $(document).ready(function(){
             $('.delete-student').click(function(event) {
                 event.preventDefault(); // Prevent the default action (i.e., following the link)
 
-                var coordinatorId = $(this).data('id'); // Get the coordinator ID from the data attribute
+                var studentId = $(this).data('id'); // Get the student ID from the data attribute
 
                 // Show SweetAlert confirmation dialog
                 Swal.fire({
@@ -196,30 +192,23 @@
                     confirmButtonText: 'Yes, delete it!'
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        // If confirmed, redirect to the delete route
-                        window.location.href = '/students/delete/' + coordinatorId;
+                        // If confirmed, send an AJAX request to delete the student
+                        $.ajax({
+                            url: '/students/delete/' + studentId,
+                            type: 'GET',
+                            success: function(response) {
+                                // Reload the page or update the table as necessary
+                                location.reload();
+                            },
+                            error: function(xhr, status, error) {
+                                // Handle the error if needed
+                                console.error(xhr.responseText);
+                            }
+                        });
                     }
                 });
             });
         });
-        
-
-        $(document).ready(function() {
-            $('.approve-btn').click(function() {
-                setApprovalStatus(this, 1);
-            });
-
-            $('.reject-btn').click(function() {
-                setApprovalStatus(this, 2);
-            });
-        });
-
-
-        function setApprovalStatus(button, status) {
-            var dataId = $(button).data('id');
-            $('#approvalStatus').val(status);
-            $('#dataId').val(dataId);
-            $('#approveRejectForm').submit();
-        }
-
     </script>
+</body>
+</html>

@@ -178,18 +178,7 @@
                                                 </tr>
                                             @endforeach
                                         </tbody>
-                                        <tfoot>
-                                            <tr>
-                                                @if($isLiveEvent)
-                                                <th>
-                                                    <input type="checkbox" checked id="selectAllCheckbox">
-                                                </th>
-                                                @endif
-                                                <th>S.No</th>
-                                                <th>Username</th>
-                                                <th>Email</th>
-                                            </tr>
-                                        </tfoot>
+                                        
                                     </table>
                                     <input type="hidden" id="allSelectedStudents" name="selected_students_1" value="{{ old('selected_students_1') }}">
                                 </form>
